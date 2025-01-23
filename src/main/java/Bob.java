@@ -12,7 +12,19 @@ public class Bob {
         p = new Parser();
         while (!isEndConversation) {
             String input = p.parse();
-            if (input.equals("bye")) {
+            if (input.length() == 0) {
+                // what to do if there is no text?
+                System.out.println("No text detected.");
+            } else if (p.lookForKeyword(input, "mark", 2)) {
+                int index;
+                try {
+                    index = p.getNumberFromString(input);
+                    boolean isDone = !(p.lookForKeyword(input, "un", 0));
+                    taskList.updateTaskCompletionStatus(index, isDone);
+                } catch (NumberFormatException e) {
+                    System.out.println("Too many spaces used.");
+                }
+            } else if (input.equals("bye")) {
                 isEndConversation = true;
                 p.closeParser();
                 exit();
