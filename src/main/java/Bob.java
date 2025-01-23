@@ -2,12 +2,13 @@ public class Bob {
 
     private static Parser p;
     private static boolean isEndConversation = false;
+    private static TaskList taskList = new TaskList();
 
     public static void exit() {
         System.out.println("Bye. Hope to see you again soon!");
     }
 
-    public static void echo() {
+    public static void chat() {
         p = new Parser();
         while (!isEndConversation) {
             String input = p.parse();
@@ -15,8 +16,11 @@ public class Bob {
                 isEndConversation = true;
                 p.closeParser();
                 exit();
+            } else if (input.equals("list")) {
+                taskList.displayTasks();
             } else {
-                System.out.println(input);
+                taskList.addTask(input);
+                System.out.println("added: " + input);
             }
         }
     }
@@ -29,6 +33,6 @@ public class Bob {
 
     public static void main(String[] args) {
         greet();
-        echo();
+        chat();
     }
 }
