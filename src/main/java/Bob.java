@@ -16,14 +16,30 @@ public class Bob {
                 // what to do if there is no text?
                 System.out.println("No text detected.");
             } else if (p.lookForKeyword(input, "mark", 2)) {
-                int index;
                 try {
-                    index = p.getNumberFromString(input);
+                    int index = p.getNumberFromString(input); // throws error
                     boolean isDone = !(p.lookForKeyword(input, "un", 0));
                     taskList.updateTaskCompletionStatus(index, isDone);
                 } catch (NumberFormatException e) {
                     System.out.println("Too many spaces used.");
                 }
+            } else if (p.lookForKeyword(input, "todo", 0)) {
+                String taskDescription = p.removeKeywordFromString(input, "todo ");
+                Task t = new Todo(taskDescription);
+                taskList.addTask(t);
+            } else if (p.lookForKeyword(input, "deadline", 0)) {
+                String taskDescription = p.removeKeywordFromString(input, "deadline ");
+                String[] taskDescriptionSegments = p.splitStringBySlash(taskDescription);
+                String deadline = p.removeKeywordFromString(taskDescriptionSegments[1], "by ");
+                Task t = new Deadline(taskDescriptionSegments[0], deadline);
+                taskList.addTask(t);
+            } else if (p.lookForKeyword(input, "event", 0)) {
+                String taskDescription = p.removeKeywordFromString(input, "deadline ");
+                String[] taskDescriptionSegments = p.splitStringBySlash(taskDescription);
+                String startTime = p.removeKeywordFromString(taskDescriptionSegments[1], "from ");
+                String endTime = p.removeKeywordFromString(taskDescriptionSegments[2], "to ");
+                Task t = new Event(taskDescriptionSegments[0], startTime, endTime);
+                taskList.addTask(t);
             } else if (input.equals("bye")) {
                 isEndConversation = true;
                 p.closeParser();
@@ -31,8 +47,7 @@ public class Bob {
             } else if (input.equals("list")) {
                 taskList.displayTasks();
             } else {
-                taskList.addTask(input);
-                System.out.println("added: " + input);
+                // what if none of the keywords are found?
             }
         }
     }

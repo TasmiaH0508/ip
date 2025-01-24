@@ -6,10 +6,12 @@ public class TaskList {
         tasks = new Task[100];
     }
 
-    public void addTask(String taskName) {
-        Task newTask = new Task(taskName);
-        tasks[numTasks] = newTask;
+    public void addTask(Task t) {
+        System.out.println("Got it. I've added this task:");
+        tasks[numTasks] = t;
         numTasks++;
+        System.out.println(t.getTaskDescription());
+        System.out.println("Now you have " + numTasks + " tasks in the list.");
     }
 
     public void updateTaskCompletionStatus(int index, boolean isDone) {

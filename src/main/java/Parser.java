@@ -35,6 +35,16 @@ class Parser {
         }
     }
 
+    public String[] splitStringBySlash(String s) {
+        return s.split("/");
+    }
+
+    public String removeKeywordFromString(String s, String toRemove) {
+        int startIndex = toRemove.length();
+        String stringNoKeyword = s.substring(startIndex);
+        return stringNoKeyword;
+    }
+
     public void closeParser() {
         if (this.scanner != null) {
             this.scanner.close();
