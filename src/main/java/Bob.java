@@ -3,7 +3,7 @@ public class Bob {
     private static Parser p = new Parser();
     private static boolean isEndConversation = false;
     private static final TaskList taskList = new TaskList();
-    private static final String[] commands = {"mark ", "todo ", "deadline ", "event ", "bye", "list"};
+    private static final String[] commands = {"mark", "todo", "deadline", "event" , "bye", "list"};
     private static final String[] prefixForCommands = {"un", "", "", "", "", ""};
     private enum TaskType {MARK, TODO, DEADLINE, EVENT, BYE, LIST};
 
@@ -11,13 +11,13 @@ public class Bob {
         System.out.println("Bye. Hope to see you again soon!");
     }
 
-    public static TaskType identifyTaskFromInput(String text) throws InvalidCommandException {
+    public static TaskType identifyTaskFromInput(String text) throws DukeException {
         for (int i = 0; i < commands.length; i++) {
             if (p.containsKeyword(text, commands[i], prefixForCommands[i])) {
                 return TaskType.values()[i];
             }
         }
-        throw new InvalidCommandException();
+        throw new DukeException("Invalid command.");
     }
 
     public static void handleMarkCommand(String input) {
@@ -31,26 +31,39 @@ public class Bob {
     }
 
     public static void handleTodoCommand(String input) {
-        String taskDescription = p.removeKeywordFromString(input, "todo ");
-        Task t = new Todo(taskDescription);
-        taskList.addTask(t);
+        String taskDescription = p.removeKeywordFromString(input, "todo");
+        if (taskDescription.length() != 0) {
+            Task t = new Todo(taskDescription);
+            taskList.addTask(t);
+        } else {
+            System.out.println("I think you're missing the task description...");
+        }
     }
 
     public static void handleDeadlineCommand(String input) {
-        String taskDescription = p.removeKeywordFromString(input, "deadline ");
+        String taskDescription = p.removeKeywordFromString(input, "deadline");
         String[] taskDescriptionSegments = p.splitStringBySlash(taskDescription);
-        String deadline = p.removeKeywordFromString(taskDescriptionSegments[1], "by ");
-        Task t = new Deadline(taskDescriptionSegments[0], deadline);
-        taskList.addTask(t);
+        if (taskDescriptionSegments.length != 2) {
+            System.out.println("I need more information. Are you missing the task description or deadline?");
+        } else {
+            String deadline = p.removeKeywordFromString(taskDescriptionSegments[1], "by ");
+            Task t = new Deadline(taskDescriptionSegments[0], deadline);
+            taskList.addTask(t);
+        }
     }
 
     public static void handleEventCommand(String input) {
-        String taskDescription = p.removeKeywordFromString(input, "event ");
+        String taskDescription = p.removeKeywordFromString(input, "event");
         String[] taskDescriptionSegments = p.splitStringBySlash(taskDescription);
-        String startTime = p.removeKeywordFromString(taskDescriptionSegments[1], "from ");
-        String endTime = p.removeKeywordFromString(taskDescriptionSegments[2], "to ");
-        Task t = new Event(taskDescriptionSegments[0], startTime, endTime);
-        taskList.addTask(t);
+        if (taskDescriptionSegments.length != 3) {
+            System.out.println("I need more information. Are you missing the task description, " +
+                    "start time or end time?");
+        } else {
+            String startTime = p.removeKeywordFromString(taskDescriptionSegments[1], "from");
+            String endTime = p.removeKeywordFromString(taskDescriptionSegments[2], "to");
+            Task t = new Event(taskDescriptionSegments[0], startTime, endTime);
+            taskList.addTask(t);
+        }
     }
 
     public static void handleListCommand() {
@@ -77,9 +90,9 @@ public class Bob {
                     p.closeParser();
                     exit();
                 }
-            } catch (InvalidCommandException e) {
+            } catch (DukeException e) {
                 System.out.println("I really want to help you but I do not know how I can do so." +
-                        "\n Try another command or give me more info.");
+                                   "Try another command or give me more info.");
             }
         }
     }

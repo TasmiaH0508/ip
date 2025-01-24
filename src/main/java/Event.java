@@ -11,6 +11,6 @@ public class Event extends Task {
 
     @Override
     public String getTaskDescription() {
-        return "[E]" + super.getTaskDescription() + "(from: " + startTime + "to: " + endTime + ")";
+        return "[E]" + super.getTaskDescription() + "(from:" + startTime + "to:" + endTime + ")";
     }
 }

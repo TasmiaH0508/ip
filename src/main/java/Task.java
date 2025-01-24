@@ -17,9 +17,9 @@ class Task {
 
     public String getStatusIcon() {
         if (isComplete) {
-            return "[X] ";
+            return "[X]";
         } else {
-            return "[ ] ";
+            return "[ ]";
         }
     }
 

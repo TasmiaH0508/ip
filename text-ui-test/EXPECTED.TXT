@@ -19,4 +19,7 @@ OK, I've marked this task as not done yet:
 [D][ ] return book (by: June 6th)
 OK, I've marked this task as not done yet:
 [D][ ] return book (by: June 6th)
+I need more information. Are you missing the task description, start time or end time?
+I really want to help you but I do not know how I can do so.Try another command or give me more info.
+I think you're missing the task description...
 Bye. Hope to see you again soon!

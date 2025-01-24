@@ -5,4 +5,7 @@ list
 mark 2
 unmark 2
 unmark 2
+event project meeting /from Aug 6th 2pm
+blah
+todo
 bye

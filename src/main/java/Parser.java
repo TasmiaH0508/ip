@@ -37,13 +37,11 @@ class Parser {
         }
     }
 
-    public String[] splitStringBySlash(String s) {
-        // todo: may throw an error
+    public static String[] splitStringBySlash(String s) {
         return s.split("/");
     }
 
     public String removeKeywordFromString(String s, String toRemove) {
-        // todo: may throw an error
         int startIndex = toRemove.length();
         String stringNoKeyword = s.substring(startIndex);
         return stringNoKeyword;
