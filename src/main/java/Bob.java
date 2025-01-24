@@ -3,9 +3,9 @@ public class Bob {
     private static Parser p = new Parser();
     private static boolean isEndConversation = false;
     private static final TaskList taskList = new TaskList();
-    private static final String[] commands = {"mark", "todo", "deadline", "event" , "bye", "list"};
-    private static final String[] prefixForCommands = {"un", "", "", "", "", ""};
-    private enum TaskType {MARK, TODO, DEADLINE, EVENT, BYE, LIST};
+    private static final String[] commands = {"mark", "todo", "deadline", "event" , "bye", "list", "delete"};
+    private static final String[] prefixForCommands = {"un", "", "", "", "", "", ""};
+    private enum TaskType {MARK, TODO, DEADLINE, EVENT, BYE, LIST, DELETE};
 
     public static void exit() {
         System.out.println("Bye. Hope to see you again soon!");
@@ -70,6 +70,15 @@ public class Bob {
         taskList.displayTasks();
     }
 
+    public static void handleDeleteCommand(String input) {
+        try {
+            int index = p.getNumberFromString(input);
+            taskList.deleteTask(index);
+        } catch (NumberFormatException e) {
+            System.out.println("Too many spaces used.");
+        }
+    }
+
     public static void chat() {
         while (!isEndConversation) {
             String input = p.parse();
@@ -85,6 +94,8 @@ public class Bob {
                     handleEventCommand(input);
                 } else if (taskType == TaskType.LIST) {
                     handleListCommand();
+                } else if (taskType == TaskType.DELETE) {
+                    handleDeleteCommand(input);
                 } else if (taskType == TaskType.BYE) {
                     isEndConversation = true;
                     p.closeParser();
