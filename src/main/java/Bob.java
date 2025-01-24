@@ -1,53 +1,85 @@
 public class Bob {
 
-    private static Parser p;
+    private static Parser p = new Parser();
     private static boolean isEndConversation = false;
-    private static TaskList taskList = new TaskList();
+    private static final TaskList taskList = new TaskList();
+    private static final String[] commands = {"mark ", "todo ", "deadline ", "event ", "bye", "list"};
+    private static final String[] prefixForCommands = {"un", "", "", "", "", ""};
+    private enum TaskType {MARK, TODO, DEADLINE, EVENT, BYE, LIST};
 
     public static void exit() {
         System.out.println("Bye. Hope to see you again soon!");
     }
 
+    public static TaskType identifyTaskFromInput(String text) throws InvalidCommandException {
+        for (int i = 0; i < commands.length; i++) {
+            if (p.containsKeyword(text, commands[i], prefixForCommands[i])) {
+                return TaskType.values()[i];
+            }
+        }
+        throw new InvalidCommandException();
+    }
+
+    public static void handleMarkCommand(String input) {
+        try {
+            int index = p.getNumberFromString(input);
+            boolean isDone = !(p.containsKeyword(input, "un", ""));
+            taskList.updateTaskCompletionStatus(index, isDone);
+        } catch (NumberFormatException e) {
+            System.out.println("Too many spaces used.");
+        }
+    }
+
+    public static void handleTodoCommand(String input) {
+        String taskDescription = p.removeKeywordFromString(input, "todo ");
+        Task t = new Todo(taskDescription);
+        taskList.addTask(t);
+    }
+
+    public static void handleDeadlineCommand(String input) {
+        String taskDescription = p.removeKeywordFromString(input, "deadline ");
+        String[] taskDescriptionSegments = p.splitStringBySlash(taskDescription);
+        String deadline = p.removeKeywordFromString(taskDescriptionSegments[1], "by ");
+        Task t = new Deadline(taskDescriptionSegments[0], deadline);
+        taskList.addTask(t);
+    }
+
+    public static void handleEventCommand(String input) {
+        String taskDescription = p.removeKeywordFromString(input, "event ");
+        String[] taskDescriptionSegments = p.splitStringBySlash(taskDescription);
+        String startTime = p.removeKeywordFromString(taskDescriptionSegments[1], "from ");
+        String endTime = p.removeKeywordFromString(taskDescriptionSegments[2], "to ");
+        Task t = new Event(taskDescriptionSegments[0], startTime, endTime);
+        taskList.addTask(t);
+    }
+
+    public static void handleListCommand() {
+        taskList.displayTasks();
+    }
+
     public static void chat() {
-        p = new Parser();
         while (!isEndConversation) {
             String input = p.parse();
-            if (input.length() == 0) {
-                // what to do if there is no text?
-                System.out.println("No text detected.");
-            } else if (p.lookForKeyword(input, "mark", 2)) {
-                try {
-                    int index = p.getNumberFromString(input); // throws error
-                    boolean isDone = !(p.lookForKeyword(input, "un", 0));
-                    taskList.updateTaskCompletionStatus(index, isDone);
-                } catch (NumberFormatException e) {
-                    System.out.println("Too many spaces used.");
+            try {
+                TaskType taskType = identifyTaskFromInput(input);
+                if (taskType == TaskType.MARK) {
+                    handleMarkCommand(input);
+                } else if (taskType == TaskType.TODO) {
+                    handleTodoCommand(input);
+                } else if (taskType == TaskType.DEADLINE) {
+                    handleDeadlineCommand(input);
+                } else if (taskType == TaskType.EVENT) {
+                    handleEventCommand(input);
+                } else if (taskType == TaskType.LIST) {
+                    handleListCommand();
+                } else if (taskType == TaskType.BYE) {
+                    isEndConversation = true;
+                    p.closeParser();
+                    exit();
                 }
-            } else if (p.lookForKeyword(input, "todo", 0)) {
-                String taskDescription = p.removeKeywordFromString(input, "todo ");
-                Task t = new Todo(taskDescription);
-                taskList.addTask(t);
-            } else if (p.lookForKeyword(input, "deadline", 0)) {
-                String taskDescription = p.removeKeywordFromString(input, "deadline ");
-                String[] taskDescriptionSegments = p.splitStringBySlash(taskDescription);
-                String deadline = p.removeKeywordFromString(taskDescriptionSegments[1], "by ");
-                Task t = new Deadline(taskDescriptionSegments[0], deadline);
-                taskList.addTask(t);
-            } else if (p.lookForKeyword(input, "event", 0)) {
-                String taskDescription = p.removeKeywordFromString(input, "event ");
-                String[] taskDescriptionSegments = p.splitStringBySlash(taskDescription);
-                String startTime = p.removeKeywordFromString(taskDescriptionSegments[1], "from ");
-                String endTime = p.removeKeywordFromString(taskDescriptionSegments[2], "to ");
-                Task t = new Event(taskDescriptionSegments[0], startTime, endTime);
-                taskList.addTask(t);
-            } else if (input.equals("bye")) {
-                isEndConversation = true;
-                p.closeParser();
-                exit();
-            } else if (input.equals("list")) {
-                taskList.displayTasks();
-            } else {
-                // what if none of the keywords are found?
+            } catch (InvalidCommandException e) {
+                System.out.println("I really want to help you but I do not know how I can do so." +
+                        "\n Try another command or give me more info.");
             }
         }
     }

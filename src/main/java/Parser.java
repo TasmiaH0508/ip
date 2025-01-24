@@ -12,15 +12,17 @@ class Parser {
         return input;
     }
 
-    public boolean lookForKeyword(String input, String lookFor, int prefixLength) {
+    public boolean containsKeyword(String input, String lookFor, String prefix) {
         int minLen = lookFor.length();
+        int prefixLength = prefix.length();
         if (input.length() < minLen) {
             return false;
         } else {
             boolean containsLookFor = input.substring(0, minLen).equals(lookFor);
             boolean containsPrefixAndLookFor = false;
             if (input.length() >= minLen + prefixLength) {
-                containsPrefixAndLookFor = input.substring(prefixLength, minLen + prefixLength).equals(lookFor);
+                lookFor = prefix + lookFor;
+                containsPrefixAndLookFor = input.substring(0, minLen + prefixLength).equals(lookFor);
             }
             return containsLookFor || containsPrefixAndLookFor;
         }
@@ -36,10 +38,12 @@ class Parser {
     }
 
     public String[] splitStringBySlash(String s) {
+        // todo: may throw an error
         return s.split("/");
     }
 
     public String removeKeywordFromString(String s, String toRemove) {
+        // todo: may throw an error
         int startIndex = toRemove.length();
         String stringNoKeyword = s.substring(startIndex);
         return stringNoKeyword;
