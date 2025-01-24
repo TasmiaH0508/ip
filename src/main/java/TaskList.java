@@ -20,7 +20,7 @@ public class TaskList {
         } else {
             index--;
             if (isDone) {
-                System.out.println("Nice, I have marked this task as done:");
+                System.out.println("Nice! I have marked this task as done:");
                 tasks[index].markAsDone();
                 System.out.println(tasks[index].getTaskDescription());
             } else {
@@ -34,7 +34,7 @@ public class TaskList {
     public void displayTasks() {
         System.out.println("Here are the tasks in your list:");
         for (int i = 0; i < numTasks; i++) {
-            System.out.println((i + 1) + ". " + tasks[i].getTaskDescription());
+            System.out.println((i + 1) + "." + tasks[i].getTaskDescription());
         }
     }
 }

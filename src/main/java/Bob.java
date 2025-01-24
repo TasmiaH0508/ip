@@ -34,7 +34,7 @@ public class Bob {
                 Task t = new Deadline(taskDescriptionSegments[0], deadline);
                 taskList.addTask(t);
             } else if (p.lookForKeyword(input, "event", 0)) {
-                String taskDescription = p.removeKeywordFromString(input, "deadline ");
+                String taskDescription = p.removeKeywordFromString(input, "event ");
                 String[] taskDescriptionSegments = p.splitStringBySlash(taskDescription);
                 String startTime = p.removeKeywordFromString(taskDescriptionSegments[1], "from ");
                 String endTime = p.removeKeywordFromString(taskDescriptionSegments[2], "to ");
