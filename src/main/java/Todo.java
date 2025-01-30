@@ -8,4 +8,9 @@ public class Todo extends Task {
     public String getTaskDescription() {
         return "[T]" + super.getTaskDescription();
     }
+
+    @Override
+    public String getString() {
+        return "todo/" + super.getString();
+    }
 }

@@ -11,4 +11,9 @@ public class Deadline extends Task {
     public String getTaskDescription() {
         return "[D]" + super.getTaskDescription() + "(by: " + deadline + ")";
     }
+
+    @Override
+    public String getString() {
+        return "deadline/" + super.getString() + "/" + deadline;
+    }
 }
