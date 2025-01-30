@@ -5,16 +5,16 @@ public class Bob {
     private static final TaskList taskList = new TaskList();
     private static final String[] commands = {"mark", "todo", "deadline", "event" , "bye", "list", "delete"};
     private static final String[] prefixForCommands = {"un", "", "", "", "", "", ""};
-    private enum TaskType {MARK, TODO, DEADLINE, EVENT, BYE, LIST, DELETE};
+    private enum CommandType {MARK, TODO, DEADLINE, EVENT, BYE, LIST, DELETE};
 
     public static void exit() {
         System.out.println("Bye. Hope to see you again soon!");
     }
 
-    public static TaskType identifyTaskFromInput(String text) throws DukeException {
+    public static CommandType identifyCommandFromInput(String text) throws DukeException {
         for (int i = 0; i < commands.length; i++) {
             if (p.containsKeyword(text, commands[i], prefixForCommands[i])) {
-                return TaskType.values()[i];
+                return CommandType.values()[i];
             }
         }
         throw new DukeException("Invalid command.");
@@ -51,7 +51,7 @@ public class Bob {
             taskList.addTask(t);
         }
     }
-
+    
     public static void handleEventCommand(String input) {
         String taskDescription = p.removeKeywordFromString(input, "event");
         String[] taskDescriptionSegments = p.splitStringBySlash(taskDescription);
@@ -83,20 +83,20 @@ public class Bob {
         while (!isEndConversation) {
             String input = p.parse();
             try {
-                TaskType taskType = identifyTaskFromInput(input);
-                if (taskType == TaskType.MARK) {
+                CommandType commandType = identifyCommandFromInput(input);
+                if (commandType == CommandType.MARK) {
                     handleMarkCommand(input);
-                } else if (taskType == TaskType.TODO) {
+                } else if (commandType == CommandType.TODO) {
                     handleTodoCommand(input);
-                } else if (taskType == TaskType.DEADLINE) {
+                } else if (commandType == CommandType.DEADLINE) {
                     handleDeadlineCommand(input);
-                } else if (taskType == TaskType.EVENT) {
+                } else if (commandType == CommandType.EVENT) {
                     handleEventCommand(input);
-                } else if (taskType == TaskType.LIST) {
+                } else if (commandType == CommandType.LIST) {
                     handleListCommand();
-                } else if (taskType == TaskType.DELETE) {
+                } else if (commandType == CommandType.DELETE) {
                     handleDeleteCommand(input);
-                } else if (taskType == TaskType.BYE) {
+                } else if (commandType == CommandType.BYE) {
                     isEndConversation = true;
                     p.closeParser();
                     exit();
@@ -114,8 +114,18 @@ public class Bob {
         System.out.println("What can I do for you?");
     }
 
+    public static void retrieveSavedTaskData() {
+        taskList.loadSavedTasks(p);
+    }
+
+    public static void saveTaskData() {
+        taskList.writeTaskDataToFile();
+    }
+
     public static void main(String[] args) {
+        retrieveSavedTaskData();
         greet();
         chat();
+        saveTaskData();
     }
 }

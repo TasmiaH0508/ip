@@ -26,4 +26,8 @@ class Task {
     public String getTaskDescription() {
         return getStatusIcon() + this.taskName;
     }
+
+    public String getString() {
+        return isComplete + "/" + taskName;
+    }
 }
