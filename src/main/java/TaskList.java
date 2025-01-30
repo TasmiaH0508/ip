@@ -1,5 +1,4 @@
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -26,7 +25,7 @@ public class TaskList {
         System.out.println("Now you have " + numTasks + " tasks in the list.");
     }
 
-    public void createAndAddTask(Parser p, String s, TaskType t) {
+    public void createAndAddTask(Parser p, String s, TaskType t) throws IndexOutOfBoundsException {
         Task task;
         String[] arr = p.splitStringBySlash(s);
         String taskDescription = arr[2];
@@ -85,15 +84,13 @@ public class TaskList {
         }
     }
 
-    public TaskType getTaskType(String s) throws IllegalArgumentException {
-        Parser p = new Parser();
+    public TaskType getTaskType(Parser p, String s) throws IllegalArgumentException {
         for (int i = 0; i < taskCommands.length; i++) {
             if (p.containsKeyword(s, taskCommands[i], "")) {
                 return TaskType.values()[i];
             }
         }
-        p.closeParser();
-        throw new IllegalArgumentException("No such task command.");
+        throw new IllegalArgumentException("File is corrupted");
     }
 
     public void loadSavedTasks(Parser p) {
@@ -107,16 +104,16 @@ public class TaskList {
                     rawTaskList.add(taskString);
                 }
                 for (String rawTask : rawTaskList) {
-                    TaskType taskType = getTaskType(rawTask);
+                    TaskType taskType = getTaskType(p, rawTask);
                     createAndAddTask(p, rawTask, taskType);
                 }
             } else {
                 savedTaskData.createNewFile();
             }
-        } catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
         } catch (IOException e) {
             System.out.println(e.getMessage());
+        } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
+            System.out.println("Some lines in the file appear corrupted. Attempting to remove and recover the remaining data...");
         }
     }
 
@@ -136,7 +133,7 @@ public class TaskList {
             fw.write(textToAdd);
             fw.close();
         } catch (IOException e) {
-            System.out.println("Something went wrong: " + e.getMessage());
+            System.out.println("Your tasks could not be saved. Sorry for the inconvenience.");
         }
     }
 }
