@@ -1,4 +1,6 @@
-class Task {
+package bob.tasks;
+
+public class Task {
     String taskName;
     boolean isComplete;
 

@@ -1,3 +1,11 @@
+package bob.tasklist;
+
+import bob.parser.Parser;
+import bob.tasks.Deadline;
+import bob.tasks.Event;
+import bob.tasks.Task;
+import bob.tasks.Todo;
+
 import java.util.ArrayList;
 import java.util.List;
 

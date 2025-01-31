@@ -1,3 +1,14 @@
+package bob;
+
+import bob.dukeException.DukeException;
+import bob.parser.Parser;
+import bob.storage.Storage;
+import bob.tasklist.TaskList;
+import bob.tasks.Deadline;
+import bob.tasks.Event;
+import bob.tasks.Task;
+import bob.tasks.Todo;
+
 public class Bob {
 
     private static Parser p = new Parser();

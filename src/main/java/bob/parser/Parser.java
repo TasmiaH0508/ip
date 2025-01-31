@@ -1,6 +1,8 @@
+package bob.parser;
+
 import java.util.Scanner;
 
-class Parser {
+public class Parser {
     Scanner scanner;
 
     public Parser() {
