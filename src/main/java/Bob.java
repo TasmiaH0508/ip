@@ -6,6 +6,7 @@ public class Bob {
     private static final String[] commands = {"mark", "todo", "deadline", "event" , "bye", "list", "delete"};
     private static final String[] prefixForCommands = {"un", "", "", "", "", "", ""};
     private enum CommandType {MARK, TODO, DEADLINE, EVENT, BYE, LIST, DELETE};
+    private static final Storage storage = new Storage();
 
     public static void exit() {
         System.out.println("Bye. Hope to see you again soon!");
@@ -124,11 +125,11 @@ public class Bob {
     }
 
     public static void retrieveSavedTaskData() {
-        taskList.loadSavedTasks(p);
+        storage.loadSavedTasks(p);
     }
 
     public static void saveTaskData() {
-        taskList.writeTaskDataToFile();
+        storage.writeTaskDataToFile(taskList);
     }
 
     public static void main(String[] args) {

@@ -1,17 +1,11 @@
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
 
 public class TaskList {
-    private List<Task> tasks;
-    private int numTasks = 0;
+    private static List<Task> tasks;
+    private static int numTasks = 0;
     private enum TaskType {TODO, DEADLINE, EVENT};
-    private String[] taskCommands = {"todo", "deadline", "event"};
+    private static String[] taskCommands = {"todo", "deadline", "event"};
 
     public TaskList() {
         tasks = new ArrayList<>();
@@ -25,7 +19,8 @@ public class TaskList {
         System.out.println("Now you have " + numTasks + " tasks in the list.");
     }
 
-    public void createAndAddTask(Parser p, String s, TaskType t) throws IndexOutOfBoundsException {
+    public static void createAndAddTask(Parser p, String s) throws IndexOutOfBoundsException {
+        TaskType t = getTaskType(p, s);
         Task task;
         String[] arr = p.splitStringBySlash(s);
         String taskDescription = arr[2];
@@ -84,56 +79,16 @@ public class TaskList {
         }
     }
 
-    public TaskType getTaskType(Parser p, String s) throws IllegalArgumentException {
+    public static TaskType getTaskType(Parser p, String s) throws IllegalArgumentException {
         for (int i = 0; i < taskCommands.length; i++) {
             if (p.containsKeyword(s, taskCommands[i], "")) {
                 return TaskType.values()[i];
             }
         }
-        throw new IllegalArgumentException("File is corrupted");
+        throw new IllegalArgumentException("File is corrupted.");
     }
 
-    public void loadSavedTasks(Parser p) {
-        File savedTaskData = new File("TaskData.txt");
-        try {
-            if (savedTaskData.exists()) {
-                Scanner fileScanner = new Scanner(savedTaskData);
-                List<String> rawTaskList = new LinkedList<>();
-                while (fileScanner.hasNextLine()) {
-                    String taskString = fileScanner.nextLine();
-                    rawTaskList.add(taskString);
-                }
-                for (String rawTask : rawTaskList) {
-                    TaskType taskType = getTaskType(p, rawTask);
-                    createAndAddTask(p, rawTask, taskType);
-                }
-            } else {
-                savedTaskData.createNewFile();
-            }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
-            System.out.println("Some lines in the file appear corrupted. Attempting to remove and recover the remaining data...");
-        }
-    }
-
-    public void writeTaskDataToFile() {
-        String textToAdd = "";
-        for (int i = 0; i < tasks.size(); i++) {
-            Task t = tasks.get(i);
-            String taskString = t.getString();
-            if (i == tasks.size() - 1) {
-                textToAdd += taskString;
-            } else {
-                textToAdd += taskString + System.lineSeparator();
-            }
-        }
-        try {
-            FileWriter fw = new FileWriter("TaskData.txt");
-            fw.write(textToAdd);
-            fw.close();
-        } catch (IOException e) {
-            System.out.println("Your tasks could not be saved. Sorry for the inconvenience.");
-        }
+    public List<Task> getTaskList() {
+        return tasks;
     }
 }
