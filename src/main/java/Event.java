@@ -1,21 +1,29 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class Event extends Task {
 
-    private String startTime;
-    private String endTime;
+    private String startTimeString;
+    private String endTimeString;
+    private LocalDate startTime;
+    private LocalDate endTime;
 
-    public Event(String taskDescription, String startTime, String endTime) {
+    public Event(String taskDescription, String startTimeString, String endTimeString) {
         super(taskDescription);
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.startTimeString = startTimeString;
+        this.endTimeString = endTimeString;
+        this.startTime = LocalDate.parse(startTimeString);
+        this.endTime = LocalDate.parse(endTimeString);
     }
 
     @Override
     public String getTaskDescription() {
-        return "[E]" + super.getTaskDescription() + "(from:" + startTime + "to:" + endTime + ")";
+        return "[E]" + super.getTaskDescription() + "(from:" + startTime.format(DateTimeFormatter.ofPattern("MMM d yyyy"))
+                + " to:" + endTime.format(DateTimeFormatter.ofPattern("MMM d yyyy")) + ")";
     }
 
     @Override
     public String getString() {
-        return "event/" + super.getString() + "/" + startTime + "/" + endTime;
+        return "event/" + super.getString() + "/" + startTimeString + "/" + endTimeString;
     }
 }

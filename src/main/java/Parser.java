@@ -1,5 +1,3 @@
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 class Parser {
@@ -39,7 +37,7 @@ class Parser {
         }
     }
 
-    public static String[] splitStringBySlash(String s) {
+    public String[] splitStringBySlash(String s) {
         return s.split("/");
     }
 

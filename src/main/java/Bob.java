@@ -41,28 +41,37 @@ public class Bob {
     }
 
     public static void handleDeadlineCommand(String input) {
-        String taskDescription = p.removeKeywordFromString(input, "deadline");
-        String[] taskDescriptionSegments = p.splitStringBySlash(taskDescription);
-        if (taskDescriptionSegments.length != 2) {
-            System.out.println("I need more information. Are you missing the task description or deadline?");
-        } else {
-            String deadline = p.removeKeywordFromString(taskDescriptionSegments[1], "by ");
-            Task t = new Deadline(taskDescriptionSegments[0], deadline);
+        try {
+            String taskDescription = p.removeKeywordFromString(input, "deadline");
+            String[] taskDescriptionSegments = p.splitStringBySlash(taskDescription);
+            String dateString = p.removeKeywordFromString(taskDescriptionSegments[1], "by ");
+            String monthString = taskDescriptionSegments[2];
+            String yearString = taskDescriptionSegments[3];
+            String deadlineString = yearString + "-" + monthString + "-" + dateString;
+            Task t = new Deadline(taskDescriptionSegments[0], deadlineString);
             taskList.addTask(t);
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("You may have followed an incorrect format. Try this format: deadline <task> /by <dd/mm/yyyy>");
         }
     }
     
     public static void handleEventCommand(String input) {
-        String taskDescription = p.removeKeywordFromString(input, "event");
-        String[] taskDescriptionSegments = p.splitStringBySlash(taskDescription);
-        if (taskDescriptionSegments.length != 3) {
-            System.out.println("I need more information. Are you missing the task description, " +
-                    "start time or end time?");
-        } else {
-            String startTime = p.removeKeywordFromString(taskDescriptionSegments[1], "from");
-            String endTime = p.removeKeywordFromString(taskDescriptionSegments[2], "to");
-            Task t = new Event(taskDescriptionSegments[0], startTime, endTime);
+        try {
+            String taskDescription = p.removeKeywordFromString(input, "event");
+            String[] taskDescriptionSegments = p.splitStringBySlash(taskDescription);
+            String startDateString = p.removeKeywordFromString(taskDescriptionSegments[1], "from ");
+            String startMonthString = taskDescriptionSegments[2];
+            String startYearString = taskDescriptionSegments[3].substring(0, 4);
+            String startTimeString = startYearString + "-" + startMonthString + "-" + startDateString;
+            String endDateString = p.removeKeywordFromString(taskDescriptionSegments[4], "to ");
+            String endMonthString = taskDescriptionSegments[5];
+            String endYearString = taskDescriptionSegments[6];
+            String endTimeString = endYearString + "-" + endMonthString + "-" + endDateString;
+            Task t = new Event(taskDescriptionSegments[0], startTimeString, endTimeString);
             taskList.addTask(t);
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("You may have followed an incorrect format. Try this format: event <task> / from " +
+                    "<dd/mm/yyyy> /to <dd/mm/yyyy>");
         }
     }
 
