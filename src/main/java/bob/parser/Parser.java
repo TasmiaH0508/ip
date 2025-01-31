@@ -35,7 +35,7 @@ public class Parser {
         if (parts.length == 2) {
             return Integer.parseInt(parts[1]);
         } else {
-            throw new NumberFormatException();
+            throw new NumberFormatException("Excess spacing was used.");
         }
     }
 
@@ -44,6 +44,7 @@ public class Parser {
     }
 
     public String removeKeywordFromString(String s, String toRemove) {
+        // this method call is preceded by the method call to containsKeyword
         int startIndex = toRemove.length();
         String stringNoKeyword = s.substring(startIndex);
         return stringNoKeyword;

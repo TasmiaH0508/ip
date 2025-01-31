@@ -23,6 +23,24 @@ public class Bob {
         System.out.println("Bye. Hope to see you again soon!");
     }
 
+    public static String enumCommandTypeToString(CommandType t) {
+        if (t == CommandType.MARK) {
+            return "mark";
+        } else if (t == CommandType.TODO) {
+            return "todo";
+        } else if (t == CommandType.DEADLINE) {
+            return "deadline";
+        } else if (t == CommandType.EVENT) {
+            return "event";
+        } else if (t == CommandType.BYE) {
+            return "bye";
+        } else if (t == CommandType.LIST) {
+            return "list";
+        } else {
+            return "delete";
+        }
+    }
+
     public static CommandType identifyCommandFromInput(String text) throws DukeException {
         for (int i = 0; i < commands.length; i++) {
             if (p.containsKeyword(text, commands[i], prefixForCommands[i])) {
