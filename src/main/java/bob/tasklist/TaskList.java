@@ -1,6 +1,7 @@
 package bob.tasklist;
 
 import bob.parser.Parser;
+
 import bob.tasks.Deadline;
 import bob.tasks.Event;
 import bob.tasks.Task;
@@ -44,7 +45,7 @@ public class TaskList {
             task = new Event(taskDescription, startTime, endTime);
         }
         if (isDone.equals("true")) {
-            task.markAsDone();
+            task.setAsDone();
         }
         tasks.add(task);
         numTasks++;
@@ -57,11 +58,11 @@ public class TaskList {
             index--;
             if (isDone) {
                 System.out.println("Nice! I have marked this task as done:");
-                tasks.get(index).markAsDone();
+                tasks.get(index).setAsDone();
                 System.out.println(tasks.get(index).getTaskDescription());
             } else {
                 System.out.println("OK, I've marked this task as not done yet:");
-                tasks.get(index).markAsNotDone();
+                tasks.get(index).setAsNotDone();
                 System.out.println(tasks.get(index).getTaskDescription());
             }
         }

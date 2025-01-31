@@ -3,7 +3,7 @@ package bob.parser;
 import java.util.Scanner;
 
 public class Parser {
-    Scanner scanner;
+    private Scanner scanner;
 
     public Parser() {
         this.scanner = new Scanner(System.in);
@@ -20,12 +20,15 @@ public class Parser {
         if (input.length() < minLen) {
             return false;
         } else {
+
             boolean containsLookFor = input.substring(0, minLen).equals(lookFor);
             boolean containsPrefixAndLookFor = false;
+
             if (input.length() >= minLen + prefixLength) {
                 lookFor = prefix + lookFor;
                 containsPrefixAndLookFor = input.substring(0, minLen + prefixLength).equals(lookFor);
             }
+
             return containsLookFor || containsPrefixAndLookFor;
         }
     }
