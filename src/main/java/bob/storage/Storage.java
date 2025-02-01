@@ -16,6 +16,11 @@ import java.util.Scanner;
 
 public class Storage {
 
+    /**
+     * Loads saved tasks from "TaskData.txt" file.
+     *
+     * @param p P parser.
+     */
     public void loadSavedTasks(Parser p) {
         File savedTaskData = new File("TaskData.txt");
         try {
@@ -43,6 +48,9 @@ public class Storage {
         }
     }
 
+    /**
+     * Saves tasks to "TaskData.txt" file.
+     */
     public void writeTaskDataToFile(TaskList tasklist) {
         List<Task> tasks = tasklist.getTaskList();
         String textToAdd = "";

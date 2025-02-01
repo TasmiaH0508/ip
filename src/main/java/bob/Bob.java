@@ -32,7 +32,13 @@ public class Bob {
         System.out.println("Bye. Hope to see you again soon!");
     }
 
-    public static String getStringFromEnumCommandType(CommandType t) {
+    /**
+     * Returns a string corresponding to CommandType.
+     *
+     * @param t T command type.
+     * @return string depending on input t
+     */
+    public static String enumCommandTypeToString(CommandType t) {
         if (t == CommandType.MARK) {
             return "mark";
         } else if (t == CommandType.TODO) {
@@ -52,6 +58,12 @@ public class Bob {
         }
     }
 
+    /**
+     * Returns the identified command type from text.
+     *
+     * @param text Text user input.
+     * @return command type depending on input text
+     */
     public static CommandType identifyCommandFromInput(String text) throws DukeException {
         for (int i = 0; i < commands.length; i++) {
             if (parser.prefixedByKeyword(text, commands[i], prefixForCommands[i])) {
@@ -61,6 +73,11 @@ public class Bob {
         throw new DukeException("Invalid command.");
     }
 
+    /**
+     * Marks task as done.
+     *
+     * @param input Input user input which contains the substring "mark" or "unmark" and is expected to end with a number.
+     */
     public static void handleMarkCommand(String input) {
         try {
             int index = parser.getNumberFromString(input);
@@ -71,6 +88,11 @@ public class Bob {
         }
     }
 
+    /**
+     * Creates a todo task, which is then added to tasklist.
+     *
+     * @param input Input user input which contains the substring "todo".
+     */
     public static void handleTodoCommand(String input) {
         String taskDescription = parser.removeKeywordFromString(input, "todo");
         if (taskDescription.length() != 0) {
@@ -81,6 +103,11 @@ public class Bob {
         }
     }
 
+    /**
+     * Creates a deadline task, which is then added to tasklist.
+     *
+     * @param input Input user input which contains the substring "deadline".
+     */
     public static void handleDeadlineCommand(String input) {
         try {
             String taskDescription = parser.removeKeywordFromString(input, "deadline");
@@ -98,7 +125,12 @@ public class Bob {
                     "Try this format: deadline <task> /by <dd/mm/yyyy>");
         }
     }
-    
+
+    /**
+     * Creates an event task, which is then added to the tasklist.
+     *
+     * @param input Input user input which contains the substring "event".
+     */
     public static void handleEventCommand(String input) {
         try {
             String taskDescription = parser.removeKeywordFromString(input, "event");
@@ -122,10 +154,18 @@ public class Bob {
         }
     }
 
+    /**
+     * Displays the tasks present in the tasklist.
+     */
     public static void handleListCommand() {
         taskList.displayTasks();
     }
 
+    /**
+     * Removes tasks from tasklist.
+     *
+     * @param input Input user input which contains "delete" substring followed by the index of the task to remove.
+     */
     public static void handleDeleteCommand(String input) {
         try {
             int index = parser.getNumberFromString(input);
@@ -155,6 +195,10 @@ public class Bob {
         taskList.displaySelectedTasks(indicesOfMatchingTaskDescriptions);
     }
 
+
+     /**
+     * Performs tasks based on user input.
+     */
     public static void chat() {
         while (!isEndConversation) {
             String input = parser.parse();
@@ -192,10 +236,16 @@ public class Bob {
         System.out.println("What can I do for you?");
     }
 
+    /**
+     * Loads saved tasks from hard disc, if present.
+     */
     public static void retrieveSavedTaskData() {
         storage.loadSavedTasks(parser);
     }
 
+    /**
+     * Saves tasks in task list to hard disc.
+     */
     public static void saveTaskData() {
         storage.writeTaskDataToFile(taskList);
     }

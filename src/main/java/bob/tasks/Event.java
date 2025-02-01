@@ -18,12 +18,22 @@ public class Event extends Task {
         this.endTime = LocalDate.parse(endTimeString);
     }
 
+    /**
+     * Returns task description.
+     *
+     * @return taskname, prefixed by status icon and task label [E], followed by the start and ent time.
+     */
     @Override
     public String getTaskDescription() {
         return "[E]" + super.getTaskDescription() + "(from:" + startTime.format(DateTimeFormatter.ofPattern("MMM d yyyy"))
                 + " to:" + endTime.format(DateTimeFormatter.ofPattern("MMM d yyyy")) + ")";
     }
 
+    /**
+     * Returns string representation of task.
+     *
+     * @return a string representing the task.
+     */
     @Override
     public String getString() {
         return "event/" + super.getString() + "/" + startTimeString + "/" + endTimeString;

@@ -13,11 +13,21 @@ public class Deadline extends Task {
         date = LocalDate.parse(deadlineString);
     }
 
+    /**
+     * Returns task description.
+     *
+     * @return taskname, prefixed by status icon and task label [D], followed by deadline.
+     */
     @Override
     public String getTaskDescription() {
         return "[D]" + super.getTaskDescription() + "(by: " + date.format(DateTimeFormatter.ofPattern("MMM d yyyy")) + ")";
     }
 
+    /**
+     * Returns string representation of task.
+     *
+     * @return a string representing the task.
+     */
     @Override
     public String getString() {
         return "deadline/" + super.getString() + "/" + deadlineString;
