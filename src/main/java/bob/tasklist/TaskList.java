@@ -75,6 +75,21 @@ public class TaskList {
         }
     }
 
+    /**
+     * Shows tasks of specific indices only.
+     */
+    public void displaySelectedTasks(List<Integer> indicesList) {
+        List<Task> selectedTasks = new ArrayList<>();
+        for (Integer index : indicesList) {
+            Task t = tasks.get(index);
+            selectedTasks.add(t);
+        }
+        int numSelectedTasks = indicesList.size();
+        for (int i = 0; i < numSelectedTasks; i++) {
+            System.out.println((i + 1) + "." + selectedTasks.get(i).getTaskDescription());
+        }
+    }
+
     public void deleteTask(int index) {
         if (index <= 0 || index > numTasks) {
             System.out.println("Invalid task index.");
@@ -90,11 +105,20 @@ public class TaskList {
 
     public static TaskType getTaskType(Parser p, String s) throws IllegalArgumentException {
         for (int i = 0; i < taskCommands.length; i++) {
-            if (p.containsKeyword(s, taskCommands[i], "")) {
+            if (p.prefixedByKeyword(s, taskCommands[i], "")) {
                 return TaskType.values()[i];
             }
         }
         throw new IllegalArgumentException("File is corrupted.");
+    }
+
+    public List<String> getAllTaskDescriptions() {
+        List<String> ll = new ArrayList<>();
+        for (Task t : tasks) {
+            String taskDescription = t.getTaskDescriptionWOIcon();
+            ll.add(taskDescription);
+        }
+        return ll;
     }
 
     public List<Task> getTaskList() {
