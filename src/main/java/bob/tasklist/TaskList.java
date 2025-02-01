@@ -19,6 +19,11 @@ public class TaskList {
         tasks = new ArrayList<>();
     }
 
+    /**
+     * Adds task to list of tasks.
+     *
+     * @param t T task to be added to the list of tasks.
+     */
     public void addTask(Task t) {
         System.out.println("Got it. I've added this task:");
         tasks.add(t);
@@ -27,6 +32,14 @@ public class TaskList {
         System.out.println("Now you have " + numTasks + " tasks in the list.");
     }
 
+    /**
+     * Creates and adds task to list of tasks.
+     *
+     * @param p P parser.
+     * @param s S string representation of a single task, loaded from saved file containing task data.
+     * @throws IndexOutOfBoundsException if string contains too few slashes separating the relevant information for a
+     * particular task type.
+     */
     public static void createAndAddTask(Parser p, String s) throws IndexOutOfBoundsException {
         TaskType t = getTaskType(p, s);
         Task task;
@@ -50,6 +63,12 @@ public class TaskList {
         numTasks++;
     }
 
+    /**
+     * Marks a task at a particular index as done or not done, depending on isDone flag.
+     *
+     * @param index Index position of task in task list.
+     * @param isDone IsDone true for task to be marked as complete and false for a task to be marked as incomplete.
+     */
     public void updateTaskCompletionStatus(int index, boolean isDone) {
         if (index <= 0 || index > numTasks) {
             System.out.println("Invalid task index.");
@@ -67,6 +86,9 @@ public class TaskList {
         }
     }
 
+    /**
+     * Shows the tasks as a numbered list of tasks.
+     */
     public void displayTasks() {
         System.out.println("Here are the tasks in your list:");
         for (int i = 0; i < numTasks; i++) {
@@ -74,6 +96,11 @@ public class TaskList {
         }
     }
 
+    /**
+     * Removes task at given index.
+     *
+     * @param index Index position of task in list.
+     */
     public void deleteTask(int index) {
         if (index <= 0 || index > numTasks) {
             System.out.println("Invalid task index.");
@@ -87,6 +114,13 @@ public class TaskList {
         }
     }
 
+    /**
+     * Returns task type.
+     *
+     * @param p P parser.
+     * @param s S string representation of a task.
+     * @throws IllegalArgumentException if string does not contain the any of the substrings: "todo", "event", "deadline".
+     */
     public static TaskType getTaskType(Parser p, String s) throws IllegalArgumentException {
         for (int i = 0; i < taskCommands.length; i++) {
             if (p.containsKeyword(s, taskCommands[i], "")) {
@@ -96,6 +130,11 @@ public class TaskList {
         throw new IllegalArgumentException("File is corrupted.");
     }
 
+    /**
+     * Returns list of tasks.
+     *
+     * @return tasks.
+     */
     public List<Task> getTaskList() {
         return tasks;
     }

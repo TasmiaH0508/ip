@@ -14,6 +14,14 @@ public class Parser {
         return input;
     }
 
+    /**
+     * Looks for the existences of a keyword or a keyword prefixed by a given prefix within a word.
+     *
+     * @param input Input word to check.
+     * @param lookFor LookFor word to search for.
+     * @param prefix Prefix a string that precedes LookFor.
+     * @return true if the keyword or the prefixed keyword exists in word and false otherwise.
+     */
     public boolean containsKeyword(String input, String lookFor, String prefix) {
         int minLen = lookFor.length();
         int prefixLength = prefix.length();
@@ -30,6 +38,14 @@ public class Parser {
         }
     }
 
+    /**
+     * Returns number existing in the second substring, where the first and second substring where originally separated
+     * with a spacing.
+     *
+     * @param s S string consisting 2 substrings separated by a space character.
+     * @return number in second substring.
+     * @throws NumberFormatException if excess spacing is used.
+     */
     public int getNumberFromString(String s) throws NumberFormatException {
         String[] parts = s.split(" ");
         if (parts.length == 2) {
@@ -39,17 +55,32 @@ public class Parser {
         }
     }
 
+    /**
+     * Returns an array of substrings originally separated within the same string by a slash.
+     *
+     * @return array of substrings.
+     */
     public String[] splitStringBySlash(String s) {
         return s.split("/");
     }
 
+    /**
+     * Removes a substring from the string, assuming the substring already exists and is located at the front of the string.
+     *
+     * @param s S string from which substring will be removed.
+     * @param toRemove ToRemove substring to remove.
+     * @return string with substring removed.
+     */
     public String removeKeywordFromString(String s, String toRemove) {
-        // this method call is preceded by the method call to containsKeyword
+        // this method call is always preceded by the method call to containsKeyword
         int startIndex = toRemove.length();
         String stringNoKeyword = s.substring(startIndex);
         return stringNoKeyword;
     }
 
+    /**
+     * Closes the scanner that reads from the console.
+     */
     public void closeParser() {
         if (this.scanner != null) {
             this.scanner.close();
