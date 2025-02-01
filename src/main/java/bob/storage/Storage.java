@@ -1,7 +1,9 @@
 package bob.storage;
 
 import bob.parser.Parser;
+
 import bob.tasks.Task;
+
 import bob.tasklist.TaskList;
 
 import java.io.File;
@@ -18,22 +20,26 @@ public class Storage {
         File savedTaskData = new File("TaskData.txt");
         try {
             if (savedTaskData.exists()) {
+
                 Scanner fileScanner = new Scanner(savedTaskData);
                 List<String> rawTaskList = new LinkedList<>();
                 while (fileScanner.hasNextLine()) {
                     String taskString = fileScanner.nextLine();
                     rawTaskList.add(taskString);
                 }
+
                 for (String rawTask : rawTaskList) {
                     TaskList.createAndAddTask(p, rawTask);
                 }
+
             } else {
                 savedTaskData.createNewFile();
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
         } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
-            System.out.println("Some lines in the file appear corrupted. Attempting to remove and recover the remaining data...");
+            System.out.println("Some lines in the file appear corrupted. " +
+                    "Attempting to remove and recover the remaining data...");
         }
     }
 

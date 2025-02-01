@@ -1,19 +1,19 @@
 package bob.tasks;
 
 public class Task {
-    String taskName;
-    boolean isComplete;
+    private String taskName;
+    private boolean isComplete;
 
     Task(String name) {
         this.taskName = name;
         this.isComplete = false;
     }
 
-    public void markAsDone() {
+    public void setAsDone() {
         this.isComplete = true;
     }
 
-    public void markAsNotDone() {
+    public void setAsNotDone() {
         this.isComplete = false;
     }
 

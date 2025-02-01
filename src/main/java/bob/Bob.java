@@ -1,9 +1,13 @@
 package bob;
 
 import bob.dukeException.DukeException;
+
 import bob.parser.Parser;
+
 import bob.storage.Storage;
+
 import bob.tasklist.TaskList;
+
 import bob.tasks.Deadline;
 import bob.tasks.Event;
 import bob.tasks.Task;
@@ -11,7 +15,7 @@ import bob.tasks.Todo;
 
 public class Bob {
 
-    private static Parser p = new Parser();
+    private static Parser parser = new Parser();
     private static boolean isEndConversation = false;
     private static final TaskList taskList = new TaskList();
     private static final String[] commands = {"mark", "todo", "deadline", "event" , "bye", "list", "delete"};
@@ -23,7 +27,7 @@ public class Bob {
         System.out.println("Bye. Hope to see you again soon!");
     }
 
-    public static String enumCommandTypeToString(CommandType t) {
+    public static String getStringFromEnumCommandType(CommandType t) {
         if (t == CommandType.MARK) {
             return "mark";
         } else if (t == CommandType.TODO) {
@@ -43,7 +47,7 @@ public class Bob {
 
     public static CommandType identifyCommandFromInput(String text) throws DukeException {
         for (int i = 0; i < commands.length; i++) {
-            if (p.containsKeyword(text, commands[i], prefixForCommands[i])) {
+            if (parser.containsKeyword(text, commands[i], prefixForCommands[i])) {
                 return CommandType.values()[i];
             }
         }
@@ -52,8 +56,8 @@ public class Bob {
 
     public static void handleMarkCommand(String input) {
         try {
-            int index = p.getNumberFromString(input);
-            boolean isDone = !(p.containsKeyword(input, "un", ""));
+            int index = parser.getNumberFromString(input);
+            boolean isDone = !(parser.containsKeyword(input, "un", ""));
             taskList.updateTaskCompletionStatus(index, isDone);
         } catch (NumberFormatException e) {
             System.out.println("Too many spaces used.");
@@ -61,7 +65,7 @@ public class Bob {
     }
 
     public static void handleTodoCommand(String input) {
-        String taskDescription = p.removeKeywordFromString(input, "todo");
+        String taskDescription = parser.removeKeywordFromString(input, "todo");
         if (taskDescription.length() != 0) {
             Task t = new Todo(taskDescription);
             taskList.addTask(t);
@@ -72,31 +76,37 @@ public class Bob {
 
     public static void handleDeadlineCommand(String input) {
         try {
-            String taskDescription = p.removeKeywordFromString(input, "deadline");
-            String[] taskDescriptionSegments = p.splitStringBySlash(taskDescription);
-            String dateString = p.removeKeywordFromString(taskDescriptionSegments[1], "by ");
+            String taskDescription = parser.removeKeywordFromString(input, "deadline");
+            String[] taskDescriptionSegments = parser.splitStringBySlash(taskDescription);
+
+            String dateString = parser.removeKeywordFromString(taskDescriptionSegments[1], "by ");
             String monthString = taskDescriptionSegments[2];
             String yearString = taskDescriptionSegments[3];
             String deadlineString = yearString + "-" + monthString + "-" + dateString;
+
             Task t = new Deadline(taskDescriptionSegments[0], deadlineString);
             taskList.addTask(t);
         } catch (IndexOutOfBoundsException e) {
-            System.out.println("You may have followed an incorrect format. Try this format: deadline <task> /by <dd/mm/yyyy>");
+            System.out.println("You may have followed an incorrect format. " +
+                    "Try this format: deadline <task> /by <dd/mm/yyyy>");
         }
     }
     
     public static void handleEventCommand(String input) {
         try {
-            String taskDescription = p.removeKeywordFromString(input, "event");
-            String[] taskDescriptionSegments = p.splitStringBySlash(taskDescription);
-            String startDateString = p.removeKeywordFromString(taskDescriptionSegments[1], "from ");
+            String taskDescription = parser.removeKeywordFromString(input, "event");
+            String[] taskDescriptionSegments = parser.splitStringBySlash(taskDescription);
+
+            String startDateString = parser.removeKeywordFromString(taskDescriptionSegments[1], "from ");
             String startMonthString = taskDescriptionSegments[2];
             String startYearString = taskDescriptionSegments[3].substring(0, 4);
             String startTimeString = startYearString + "-" + startMonthString + "-" + startDateString;
-            String endDateString = p.removeKeywordFromString(taskDescriptionSegments[4], "to ");
+
+            String endDateString = parser.removeKeywordFromString(taskDescriptionSegments[4], "to ");
             String endMonthString = taskDescriptionSegments[5];
             String endYearString = taskDescriptionSegments[6];
             String endTimeString = endYearString + "-" + endMonthString + "-" + endDateString;
+
             Task t = new Event(taskDescriptionSegments[0], startTimeString, endTimeString);
             taskList.addTask(t);
         } catch (IndexOutOfBoundsException e) {
@@ -111,7 +121,7 @@ public class Bob {
 
     public static void handleDeleteCommand(String input) {
         try {
-            int index = p.getNumberFromString(input);
+            int index = parser.getNumberFromString(input);
             taskList.deleteTask(index);
         } catch (NumberFormatException e) {
             System.out.println("Too many spaces used.");
@@ -120,7 +130,7 @@ public class Bob {
 
     public static void chat() {
         while (!isEndConversation) {
-            String input = p.parse();
+            String input = parser.parse();
             try {
                 CommandType commandType = identifyCommandFromInput(input);
                 if (commandType == CommandType.MARK) {
@@ -137,12 +147,12 @@ public class Bob {
                     handleDeleteCommand(input);
                 } else if (commandType == CommandType.BYE) {
                     isEndConversation = true;
-                    p.closeParser();
+                    parser.closeParser();
                     exit();
                 }
             } catch (DukeException e) {
                 System.out.println("I really want to help you but I do not know how I can do so." +
-                                   "Try another command or give me more info.");
+                        "Try another command or give me more info.");
             }
         }
     }
@@ -154,7 +164,7 @@ public class Bob {
     }
 
     public static void retrieveSavedTaskData() {
-        storage.loadSavedTasks(p);
+        storage.loadSavedTasks(parser);
     }
 
     public static void saveTaskData() {
