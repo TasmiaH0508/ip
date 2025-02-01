@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class ParserTest {
 
     @Test
-    public void testContainsKeyword() {
+    public void testPrefixedByKeyword() {
         // testContainsKeyword relies purely on Java String methods
         Parser p = new Parser();
 
@@ -16,25 +16,25 @@ public class ParserTest {
         String input1 = "mark 7";
         String lookFor1 = "mark";
         String prefix1 = "";
-        assertEquals(true, p.containsKeyword(input1, lookFor1, prefix1));
+        assertEquals(true, p.prefixedByKeyword(input1, lookFor1, prefix1));
 
         // test 2 returns true since the function is supposed to look for the existences of "mark" and "unmark"
         String input2 = "mark 7";
         String lookFor2 = "mark";
         String prefix2 = "un";
-        assertEquals(true, p.containsKeyword(input2, lookFor2, prefix2));
+        assertEquals(true, p.prefixedByKeyword(input2, lookFor2, prefix2));
 
         // test 3
         String input3 = "mark 7";
         String lookFor3 = "unmark";
         String prefix3 = "";
-        assertEquals(false, p.containsKeyword(input3, lookFor3, prefix3));
+        assertEquals(false, p.prefixedByKeyword(input3, lookFor3, prefix3));
 
         // test 4
         String input4 = "mark";
         String lookFor4 = "john";
         String prefix4 = "";
-        assertEquals(false, p.containsKeyword(input4, lookFor4, prefix4));
+        assertEquals(false, p.prefixedByKeyword(input4, lookFor4, prefix4));
 
         p.closeParser();
     }

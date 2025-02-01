@@ -29,6 +29,15 @@ public class Task {
         return getStatusIcon() + this.taskName;
     }
 
+    /**
+     * Returns task name without status icon.
+     *
+     * @return taskname.
+     */
+    public String getTaskDescriptionWOIcon() {
+        return this.taskName;
+    }
+
     public String getString() {
         return isComplete + "/" + taskName;
     }

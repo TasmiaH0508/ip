@@ -14,7 +14,7 @@ public class Parser {
         return input;
     }
 
-    public boolean containsKeyword(String input, String lookFor, String prefix) {
+    public boolean prefixedByKeyword(String input, String lookFor, String prefix) {
         int minLen = lookFor.length();
         int prefixLength = prefix.length();
         if (input.length() < minLen) {
@@ -43,11 +43,36 @@ public class Parser {
         return s.split("/");
     }
 
+    /**
+     * Returns an array of substrings originally separated by spaces.
+     *
+     * @param s S string containing substrings separated by spaces.
+     * @return array of substrings
+     */
+    public String[] splitStringBySpacing(String s) {
+        return s.split(" ");
+    }
+
     public String removeKeywordFromString(String s, String toRemove) {
         // this method call is preceded by the method call to containsKeyword
         int startIndex = toRemove.length();
         String stringNoKeyword = s.substring(startIndex);
         return stringNoKeyword;
+    }
+
+    /**
+     * Returns true if a keyword exists and false otherwise.
+     */
+    public boolean containsKeyword(String input, String[] parts) {
+        String[] inputParts = splitStringBySpacing(input);
+        for (String inputPart : inputParts) {
+            for (String part : parts) {
+                if (part.equals(inputPart)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void closeParser() {

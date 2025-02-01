@@ -9,14 +9,19 @@ import bob.tasks.Event;
 import bob.tasks.Task;
 import bob.tasks.Todo;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class Bob {
 
     private static Parser p = new Parser();
     private static boolean isEndConversation = false;
     private static final TaskList taskList = new TaskList();
-    private static final String[] commands = {"mark", "todo", "deadline", "event" , "bye", "list", "delete"};
-    private static final String[] prefixForCommands = {"un", "", "", "", "", "", ""};
-    private enum CommandType {MARK, TODO, DEADLINE, EVENT, BYE, LIST, DELETE};
+    private static final String[] commands = {"mark", "todo", "deadline", "event" , "bye", "list", "delete", ""};
+    private static final String[] prefixForCommands = {"un", "", "", "", "", "", "", ""};
+    private enum CommandType {MARK, TODO, DEADLINE, EVENT, BYE, LIST, DELETE, SEARCH};
     private static final Storage storage = new Storage();
 
     public static void exit() {
@@ -36,14 +41,16 @@ public class Bob {
             return "bye";
         } else if (t == CommandType.LIST) {
             return "list";
-        } else {
+        } else if (t == CommandType.DELETE) {
             return "delete";
+        } else {
+            return "search";
         }
     }
 
     public static CommandType identifyCommandFromInput(String text) throws DukeException {
         for (int i = 0; i < commands.length; i++) {
-            if (p.containsKeyword(text, commands[i], prefixForCommands[i])) {
+            if (p.prefixedByKeyword(text, commands[i], prefixForCommands[i])) {
                 return CommandType.values()[i];
             }
         }
@@ -53,7 +60,7 @@ public class Bob {
     public static void handleMarkCommand(String input) {
         try {
             int index = p.getNumberFromString(input);
-            boolean isDone = !(p.containsKeyword(input, "un", ""));
+            boolean isDone = !(p.prefixedByKeyword(input, "un", ""));
             taskList.updateTaskCompletionStatus(index, isDone);
         } catch (NumberFormatException e) {
             System.out.println("Too many spaces used.");
@@ -118,6 +125,26 @@ public class Bob {
         }
     }
 
+    /**
+     * Performs search based on user input.
+     *
+     * @param input Input user input.
+     */
+    public static void handleSearchCommand(String input) {
+        List<String> allTaskDescriptions = taskList.getAllTaskDescriptions();
+        List<Integer> indicesOfMatchingTaskDescriptions = new ArrayList<>();
+        String[] inputParts = p.splitStringBySpacing(input);
+        Set<Integer> alreadyAdded = new HashSet<>();
+        for (int i = 0; i < allTaskDescriptions.size(); i++) {
+            String taskDescription = allTaskDescriptions.get(i);
+            if (p.containsKeyword(taskDescription, inputParts) && !alreadyAdded.contains(i))  {
+                alreadyAdded.add(i);
+                indicesOfMatchingTaskDescriptions.add(i);
+            }
+        }
+        taskList.displaySelectedTasks(indicesOfMatchingTaskDescriptions);
+    }
+
     public static void chat() {
         while (!isEndConversation) {
             String input = p.parse();
@@ -139,6 +166,8 @@ public class Bob {
                     isEndConversation = true;
                     p.closeParser();
                     exit();
+                } else {
+                    handleSearchCommand(input);
                 }
             } catch (DukeException e) {
                 System.out.println("I really want to help you but I do not know how I can do so." +
