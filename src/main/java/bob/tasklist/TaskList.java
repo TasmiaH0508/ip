@@ -172,6 +172,12 @@ public class TaskList {
         throw new IllegalArgumentException("File is corrupted.");
     }
 
+    /**
+     * Returns list of tasks containing the input keyword.
+     *
+     * @param input Input word to look for in task description.
+     * @return list of tasks, each of which has a task description containing the input keyword.
+     */
     public List<Task> getSearchResults(String input) {
         if (stringToTasks.containsKey(input)) {
             return stringToTasks.get(input);

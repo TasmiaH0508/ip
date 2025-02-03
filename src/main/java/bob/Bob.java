@@ -186,18 +186,24 @@ public class Bob {
         List<Task> res = new ArrayList<>();
         for (String inputPart : inputParts) {
             List<Task> searchResults = taskList.getSearchResults(inputPart);
-            for (Task searchResult : searchResults) {
-                if (!alreadyAdded.contains(searchResult)) {
-                    alreadyAdded.add(searchResult);
-                    res.add(searchResult);
+            if (searchResults != null) {
+                for (Task searchResult : searchResults) {
+                    if (!alreadyAdded.contains(searchResult)) {
+                        alreadyAdded.add(searchResult);
+                        res.add(searchResult);
+                    }
                 }
             }
         }
-        System.out.println("Here are the matching tasks in your list:");
-        for (int i = 0; i < res.size(); i++) {
-            Task t = res.get(i);
-            String taskDescription = t.getTaskDescription();
-            System.out.println((i + 1) + "." + taskDescription);
+        if (res.size() != 0) {
+            System.out.println("Here are the matching tasks in your list:");
+            for (int i = 0; i < res.size(); i++) {
+                Task t = res.get(i);
+                String taskDescription = t.getTaskDescription();
+                System.out.println((i + 1) + "." + taskDescription);
+            }
+        } else {
+            System.out.println("None of the tasks match the description.");
         }
     }
 

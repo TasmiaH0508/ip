@@ -20,6 +20,7 @@ public class Storage {
      * Loads saved tasks from "TaskData.txt" file.
      *
      * @param p P parser.
+     * @param taskList taskList list of tasks.
      */
     public void loadSavedTasks(Parser p, TaskList taskList) {
         File savedTaskData = new File("TaskData.txt");
@@ -47,9 +48,11 @@ public class Storage {
 
     /**
      * Saves tasks to "TaskData.txt" file.
+     *
+     * @param taskList TaskList list of tasks to be saved
      */
-    public void writeTaskDataToFile(TaskList tasklist) {
-        List<Task> tasks = tasklist.getTaskList();
+    public void writeTaskDataToFile(TaskList taskList) {
+        List<Task> tasks = taskList.getTaskList();
         String textToAdd = "";
         for (int i = 0; i < tasks.size(); i++) {
             Task t = tasks.get(i);
