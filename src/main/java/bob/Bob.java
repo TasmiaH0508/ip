@@ -97,7 +97,7 @@ public class Bob {
         String taskDescription = parser.removeKeywordFromString(input, "todo");
         if (taskDescription.length() != 0) {
             Task t = new Todo(taskDescription);
-            taskList.addTask(t);
+            taskList.addTask(t,parser);
         } else {
             System.out.println("I think you're missing the task description...");
         }
@@ -119,7 +119,7 @@ public class Bob {
             String deadlineString = yearString + "-" + monthString + "-" + dateString;
 
             Task t = new Deadline(taskDescriptionSegments[0], deadlineString);
-            taskList.addTask(t);
+            taskList.addTask(t, parser);
         } catch (IndexOutOfBoundsException e) {
             System.out.println("You may have followed an incorrect format. " +
                     "Try this format: deadline <task> /by <dd/mm/yyyy>");
@@ -147,7 +147,7 @@ public class Bob {
             String endTimeString = endYearString + "-" + endMonthString + "-" + endDateString;
 
             Task t = new Event(taskDescriptionSegments[0], startTimeString, endTimeString);
-            taskList.addTask(t);
+            taskList.addTask(t, parser);
         } catch (IndexOutOfBoundsException e) {
             System.out.println("You may have followed an incorrect format. Try this format: event <task> / from " +
                     "<dd/mm/yyyy> /to <dd/mm/yyyy>");
@@ -169,7 +169,7 @@ public class Bob {
     public static void handleDeleteCommand(String input) {
         try {
             int index = parser.getNumberFromString(input);
-            taskList.deleteTask(index);
+            taskList.deleteTask(index, parser);
         } catch (NumberFormatException e) {
             System.out.println("Too many spaces used.");
         }
@@ -181,18 +181,24 @@ public class Bob {
      * @param input Input user input.
      */
     public static void handleSearchCommand(String input) {
-        List<String> allTaskDescriptions = taskList.getAllTaskDescriptions();
-        List<Integer> indicesOfMatchingTaskDescriptions = new ArrayList<>();
         String[] inputParts = parser.splitStringBySpacing(input);
-        Set<Integer> alreadyAdded = new HashSet<>();
-        for (int i = 0; i < allTaskDescriptions.size(); i++) {
-            String taskDescription = allTaskDescriptions.get(i);
-            if (parser.containsKeyword(taskDescription, inputParts) && !alreadyAdded.contains(i))  {
-                alreadyAdded.add(i);
-                indicesOfMatchingTaskDescriptions.add(i);
+        Set<Task> alreadyAdded = new HashSet<>();
+        List<Task> res = new ArrayList<>();
+        for (String inputPart : inputParts) {
+            List<Task> searchResults = taskList.getSearchResults(inputPart);
+            for (Task searchResult : searchResults) {
+                if (!alreadyAdded.contains(searchResult)) {
+                    alreadyAdded.add(searchResult);
+                    res.add(searchResult);
+                }
             }
         }
-        taskList.displaySelectedTasks(indicesOfMatchingTaskDescriptions);
+        System.out.println("Here are the matching tasks in your list:");
+        for (int i = 0; i < res.size(); i++) {
+            Task t = res.get(i);
+            String taskDescription = t.getTaskDescription();
+            System.out.println((i + 1) + "." + taskDescription);
+        }
     }
 
 
@@ -240,7 +246,7 @@ public class Bob {
      * Loads saved tasks from hard disc, if present.
      */
     public static void retrieveSavedTaskData() {
-        storage.loadSavedTasks(parser);
+        storage.loadSavedTasks(parser, taskList);
     }
 
     /**

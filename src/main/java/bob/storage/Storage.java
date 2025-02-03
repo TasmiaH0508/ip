@@ -21,22 +21,19 @@ public class Storage {
      *
      * @param p P parser.
      */
-    public void loadSavedTasks(Parser p) {
+    public void loadSavedTasks(Parser p, TaskList taskList) {
         File savedTaskData = new File("TaskData.txt");
         try {
             if (savedTaskData.exists()) {
-
                 Scanner fileScanner = new Scanner(savedTaskData);
                 List<String> rawTaskList = new LinkedList<>();
                 while (fileScanner.hasNextLine()) {
                     String taskString = fileScanner.nextLine();
                     rawTaskList.add(taskString);
                 }
-
                 for (String rawTask : rawTaskList) {
-                    TaskList.createAndAddTask(p, rawTask);
+                    taskList.createAndAddTask(p, rawTask);
                 }
-
             } else {
                 savedTaskData.createNewFile();
             }

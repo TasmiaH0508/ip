@@ -8,13 +8,16 @@ import bob.tasks.Task;
 import bob.tasks.Todo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TaskList {
-    private static List<Task> tasks;
-    private static int numTasks = 0;
+    private List<Task> tasks;
+    private int numTasks = 0;
     private enum TaskType {TODO, DEADLINE, EVENT};
-    private static String[] taskCommands = {"todo", "deadline", "event"};
+    private String[] taskCommands = {"todo", "deadline", "event"};
+    private Map<String, List<Task>> stringToTasks = new HashMap<>();
 
     public TaskList() {
         tasks = new ArrayList<>();
@@ -25,12 +28,26 @@ public class TaskList {
      *
      * @param t T task to be added to the list of tasks.
      */
-    public void addTask(Task t) {
+    public void addTask(Task t, Parser p) {
         System.out.println("Got it. I've added this task:");
         tasks.add(t);
         numTasks++;
         System.out.println(t.getTaskDescription());
         System.out.println("Now you have " + numTasks + " tasks in the list.");
+
+        // update hashmap with keywords in task description to facilitate searching later
+        String taskDescription = t.getTaskDescriptionWOIcon();
+        String[] taskDescriptionParts = p.splitStringBySpacing(taskDescription);
+        for (String taskDescriptionPart : taskDescriptionParts) {
+            if (stringToTasks.containsKey(taskDescriptionPart)) {
+                List<Task> ll = stringToTasks.get(taskDescriptionPart);
+                ll.add(t);
+            } else {
+                List<Task> ll = new ArrayList<>();
+                ll.add(t);
+                stringToTasks.put(taskDescriptionPart, ll);
+            }
+        }
     }
 
     /**
@@ -41,7 +58,7 @@ public class TaskList {
      * @throws IndexOutOfBoundsException if string contains too few slashes separating the relevant information for a
      * particular task type.
      */
-    public static void createAndAddTask(Parser p, String s) throws IndexOutOfBoundsException {
+    public void createAndAddTask(Parser p, String s) throws IndexOutOfBoundsException {
         TaskType t = getTaskType(p, s);
         Task task;
         String[] arr = p.splitStringBySlash(s);
@@ -62,6 +79,19 @@ public class TaskList {
         }
         tasks.add(task);
         numTasks++;
+
+        // update hashmap with keywords in task description to facilitate searching later
+        String[] taskDescriptionParts = p.splitStringBySpacing(taskDescription);
+        for (String taskDescriptionPart : taskDescriptionParts) {
+            if (stringToTasks.containsKey(taskDescriptionPart)) {
+                List<Task> ll = stringToTasks.get(taskDescriptionPart);
+                ll.add(task);
+            } else {
+                List<Task> ll = new ArrayList<>();
+                ll.add(task);
+                stringToTasks.put(taskDescriptionPart, ll);
+            }
+        }
     }
 
     /**
@@ -98,37 +128,31 @@ public class TaskList {
     }
 
     /**
-     * Shows tasks of specific indices only.
-     *
-     * @param indicesList IndicesList contains indices of tasks to be displayed.
-     */
-    public void displaySelectedTasks(List<Integer> indicesList) {
-        List<Task> selectedTasks = new ArrayList<>();
-        for (Integer index : indicesList) {
-            Task t = tasks.get(index);
-            selectedTasks.add(t);
-        }
-        int numSelectedTasks = indicesList.size();
-        for (int i = 0; i < numSelectedTasks; i++) {
-            System.out.println((i + 1) + "." + selectedTasks.get(i).getTaskDescription());
-        }
-    }
-
-    /**
      * Removes task at given index.
      *
      * @param index Index position of task in list.
      */
-    public void deleteTask(int index) {
+    public void deleteTask(int index, Parser p) {
         if (index <= 0 || index > numTasks) {
             System.out.println("Invalid task index.");
         } else {
             System.out.println("Noted. I've removed this task:");
             index--;
-            System.out.println(tasks.get(index).getTaskDescription());
-            tasks.remove(index);
+            Task t = tasks.get(index);
+            System.out.println(t.getTaskDescription());
+            tasks.remove(t);
             numTasks--;
             System.out.println("Now you have " + numTasks + " tasks in the list.");
+
+            // Update hashmap
+            String taskDescription = t.getTaskDescriptionWOIcon();
+            String[] taskDescriptionParts = p.splitStringBySpacing(taskDescription);
+            for (String taskDescriptionPart : taskDescriptionParts) {
+                if (stringToTasks.containsKey(taskDescriptionPart)) {
+                    List<Task> ll = stringToTasks.get(taskDescriptionPart);
+                    ll.remove(t);
+                }
+            }
         }
     }
 
@@ -139,7 +163,7 @@ public class TaskList {
      * @param s S string representation of a task.
      * @throws IllegalArgumentException if string does not contain the any of the substrings: "todo", "event", "deadline".
      */
-    public static TaskType getTaskType(Parser p, String s) throws IllegalArgumentException {
+    public TaskType getTaskType(Parser p, String s) throws IllegalArgumentException {
         for (int i = 0; i < taskCommands.length; i++) {
             if (p.prefixedByKeyword(s, taskCommands[i], "")) {
                 return TaskType.values()[i];
@@ -148,13 +172,12 @@ public class TaskList {
         throw new IllegalArgumentException("File is corrupted.");
     }
 
-    public List<String> getAllTaskDescriptions() {
-        List<String> ll = new ArrayList<>();
-        for (Task t : tasks) {
-            String taskDescription = t.getTaskDescriptionWOIcon();
-            ll.add(taskDescription);
+    public List<Task> getSearchResults(String input) {
+        if (stringToTasks.containsKey(input)) {
+            return stringToTasks.get(input);
+        } else {
+            return null;
         }
-        return ll;
     }
 
     /**

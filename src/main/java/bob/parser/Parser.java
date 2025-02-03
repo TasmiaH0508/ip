@@ -92,21 +92,6 @@ public class Parser {
     }
 
     /**
-     * Returns true if a keyword exists and false otherwise.
-     */
-    public boolean containsKeyword(String input, String[] parts) {
-        String[] inputParts = splitStringBySpacing(input);
-        for (String inputPart : inputParts) {
-            for (String part : parts) {
-                if (part.equals(inputPart)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
      * Closes the scanner that reads from the console.
      */
     public void closeParser() {
