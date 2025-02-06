@@ -2,6 +2,10 @@ package bob.parser;
 
 import java.util.Scanner;
 
+
+/**
+ * Represents a parser, which is an object that can read from the console and perform operations on strings.
+ */
 public class Parser {
     private Scanner scanner;
 
@@ -9,6 +13,11 @@ public class Parser {
         this.scanner = new Scanner(System.in);
     }
 
+    /**
+     * Returns user's input from the console as a string.
+     *
+     * @return user input as a string.
+     */
     public String parse() {
         String input = this.scanner.nextLine();
         return input;

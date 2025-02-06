@@ -18,16 +18,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Represents the chatbot named Bob.
+ */
 public class Bob {
 
     private static Parser parser = new Parser();
     private static boolean isEndConversation = false;
-    private static final TaskList taskList = new TaskList();
-    private static final String[] commands = {"mark", "todo", "deadline", "event" , "bye", "list", "delete", ""};
-    private static final String[] prefixForCommands = {"un", "", "", "", "", "", "", ""};
+    private static final TaskList TASK_LIST = new TaskList();
+    private static final String[] COMMANDS = {"mark", "todo", "deadline", "event" , "bye", "list", "delete", ""};
+    private static final String[] PREFIX_FOR_COMMANDS = {"un", "", "", "", "", "", "", ""};
     private enum CommandType {MARK, TODO, DEADLINE, EVENT, BYE, LIST, DELETE, SEARCH};
-    private static final Storage storage = new Storage();
+    private static final Storage STORAGE = new Storage();
 
+    /**
+     * Exits from program.
+     */
     public static void exit() {
         System.out.println("Bye. Hope to see you again soon!");
     }
@@ -65,8 +71,8 @@ public class Bob {
      * @return command type depending on input text
      */
     public static CommandType identifyCommandFromInput(String text) throws DukeException {
-        for (int i = 0; i < commands.length; i++) {
-            if (parser.prefixedByKeyword(text, commands[i], prefixForCommands[i])) {
+        for (int i = 0; i < COMMANDS.length; i++) {
+            if (parser.prefixedByKeyword(text, COMMANDS[i], PREFIX_FOR_COMMANDS[i])) {
                 return CommandType.values()[i];
             }
         }
@@ -82,7 +88,7 @@ public class Bob {
         try {
             int index = parser.getNumberFromString(input);
             boolean isDone = !(parser.prefixedByKeyword(input, "un", ""));
-            taskList.updateTaskCompletionStatus(index, isDone);
+            TASK_LIST.updateTaskCompletionStatus(index, isDone);
         } catch (NumberFormatException e) {
             System.out.println("Too many spaces used.");
         }
@@ -97,7 +103,7 @@ public class Bob {
         String taskDescription = parser.removeKeywordFromString(input, "todo");
         if (taskDescription.length() != 0) {
             Task t = new Todo(taskDescription);
-            taskList.addTask(t,parser);
+            TASK_LIST.addTask(t,parser);
         } else {
             System.out.println("I think you're missing the task description...");
         }
@@ -119,7 +125,7 @@ public class Bob {
             String deadlineString = yearString + "-" + monthString + "-" + dateString;
 
             Task t = new Deadline(taskDescriptionSegments[0], deadlineString);
-            taskList.addTask(t, parser);
+            TASK_LIST.addTask(t, parser);
         } catch (IndexOutOfBoundsException e) {
             System.out.println("You may have followed an incorrect format. " +
                     "Try this format: deadline <task> /by <dd/mm/yyyy>");
@@ -147,7 +153,7 @@ public class Bob {
             String endTimeString = endYearString + "-" + endMonthString + "-" + endDateString;
 
             Task t = new Event(taskDescriptionSegments[0], startTimeString, endTimeString);
-            taskList.addTask(t, parser);
+            TASK_LIST.addTask(t, parser);
         } catch (IndexOutOfBoundsException e) {
             System.out.println("You may have followed an incorrect format. Try this format: event <task> / from " +
                     "<dd/mm/yyyy> /to <dd/mm/yyyy>");
@@ -158,7 +164,7 @@ public class Bob {
      * Displays the tasks present in the tasklist.
      */
     public static void handleListCommand() {
-        taskList.displayTasks();
+        TASK_LIST.displayTasks();
     }
 
     /**
@@ -169,7 +175,7 @@ public class Bob {
     public static void handleDeleteCommand(String input) {
         try {
             int index = parser.getNumberFromString(input);
-            taskList.deleteTask(index, parser);
+            TASK_LIST.deleteTask(index, parser);
         } catch (NumberFormatException e) {
             System.out.println("Too many spaces used.");
         }
@@ -185,7 +191,7 @@ public class Bob {
         Set<Task> alreadyAdded = new HashSet<>();
         List<Task> res = new ArrayList<>();
         for (String inputPart : inputParts) {
-            List<Task> searchResults = taskList.getSearchResults(inputPart);
+            List<Task> searchResults = TASK_LIST.getSearchResults(inputPart);
             if (searchResults != null) {
                 for (Task searchResult : searchResults) {
                     if (!alreadyAdded.contains(searchResult)) {
@@ -242,6 +248,9 @@ public class Bob {
         }
     }
 
+    /**
+     * Greets the user.
+     */
     public static void greet() {
         String name = "Bob";
         System.out.println("Hello! I'm " + name);
@@ -252,14 +261,14 @@ public class Bob {
      * Loads saved tasks from hard disc, if present.
      */
     public static void retrieveSavedTaskData() {
-        storage.loadSavedTasks(parser, taskList);
+        STORAGE.loadSavedTasks(parser, TASK_LIST);
     }
 
     /**
      * Saves tasks in task list to hard disc.
      */
     public static void saveTaskData() {
-        storage.writeTaskDataToFile(taskList);
+        STORAGE.writeTaskDataToFile(TASK_LIST);
     }
 
     public static void main(String[] args) {

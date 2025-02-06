@@ -3,6 +3,10 @@ package bob.tasks;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+
+/**
+ * Represents a deadline task, which is a type of task.
+ */
 public class Deadline extends Task {
     private String deadlineString;
     private LocalDate date;

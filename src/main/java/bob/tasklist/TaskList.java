@@ -12,6 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * Represents a list of task objects.
+ */
 public class TaskList {
     private List<Task> tasks;
     private int numTasks = 0;

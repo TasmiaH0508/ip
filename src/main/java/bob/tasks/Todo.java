@@ -1,5 +1,8 @@
 package bob.tasks;
 
+/**
+ * Represents todo event, which is a type of task.
+ */
 public class Todo extends Task {
 
     public Todo(String s) {

@@ -14,6 +14,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
+
+/**
+ * Represents storage for saved task data.
+ */
 public class Storage {
 
     /**

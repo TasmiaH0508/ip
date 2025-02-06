@@ -1,5 +1,8 @@
 package bob.tasks;
 
+/**
+ * Represents a task object.
+ */
 public class Task {
     private String taskName;
     private boolean isComplete;

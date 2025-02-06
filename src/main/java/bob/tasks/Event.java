@@ -3,6 +3,10 @@ package bob.tasks;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+
+/**
+ * Represents an event task, which is a type of task.
+ */
 public class Event extends Task {
 
     private String startTimeString;
