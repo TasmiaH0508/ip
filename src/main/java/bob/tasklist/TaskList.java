@@ -28,20 +28,22 @@ public class TaskList {
     }
 
     /**
-     * Adds task to list of tasks.
+     * Adds task to list of tasks and returns a message indicating the task has been added.
      *
      * @param t T task to be added to the list of tasks.
+     * @param p P parser.
+     * @return message as a string.
      */
-    public void addTask(Task t, Parser p) {
-        System.out.println("Got it. I've added this task:");
+    public String addTask(Task t, Parser p) {
         tasks.add(t);
         numTasks++;
-        System.out.println(t.getTaskDescription());
-        System.out.println("Now you have " + numTasks + " tasks in the list.");
+        String taskDescription = t.getTaskDescription();
+        String message = "Got it. I've added this task:\n" + taskDescription
+                + "\nNow you have " + numTasks + " tasks in the list.";
 
         // update hashmap with keywords in task description to facilitate searching later
-        String taskDescription = t.getTaskDescriptionWOIcon();
-        String[] taskDescriptionParts = p.splitStringBySpacing(taskDescription);
+        String taskDescriptionWOIcon = t.getTaskDescriptionWOIcon();
+        String[] taskDescriptionParts = p.splitStringBySpacing(taskDescriptionWOIcon);
         for (String taskDescriptionPart : taskDescriptionParts) {
             if (stringToTasks.containsKey(taskDescriptionPart)) {
                 List<Task> ll = stringToTasks.get(taskDescriptionPart);
@@ -52,6 +54,7 @@ public class TaskList {
                 stringToTasks.put(taskDescriptionPart, ll);
             }
         }
+        return message;
     }
 
     /**
@@ -99,58 +102,72 @@ public class TaskList {
     }
 
     /**
-     * Marks a task at a particular index as done or not done, depending on isDone flag.
+     * Marks a task at a particular index as done or not done, depending on isDone flag, and returns a message
+     * indicating if task completion status has been updated successfully.
      *
      * @param index Index position of task in task list.
      * @param isDone IsDone true for task to be marked as complete and false for a task to be marked as incomplete.
+     * @return message as a string
      */
-    public void updateTaskCompletionStatus(int index, boolean isDone) {
+    public String updateTaskCompletionStatus(int index, boolean isDone) {
+        String message;
         if (index <= 0 || index > numTasks) {
-            System.out.println("Invalid task index.");
+            message = "Invalid task index.";
         } else {
             index--;
+            String taskDescription;
             if (isDone) {
-                System.out.println("Nice! I have marked this task as done:");
                 tasks.get(index).setAsDone();
-                System.out.println(tasks.get(index).getTaskDescription());
+                taskDescription = tasks.get(index).getTaskDescription();
+                message = "Nice! I have marked this task as done:\n" + taskDescription;
             } else {
-                System.out.println("OK, I've marked this task as not done yet:");
                 tasks.get(index).setAsNotDone();
-                System.out.println(tasks.get(index).getTaskDescription());
+                taskDescription = tasks.get(index).getTaskDescription();
+                message = "OK, I've marked this task as not done yet:\n" + taskDescription;
             }
         }
+        return message;
     }
 
     /**
-     * Shows the tasks as a numbered list of tasks.
+     * Shows the tasks as a numbered list of tasks and returns a string containing all the tasks.
+     *
+     * @return all the tasks as a string.
      */
-    public void displayTasks() {
-        System.out.println("Here are the tasks in your list:");
+    public String displayTasks() {
+        String message = "Here are the tasks in your list:\n";
         for (int i = 0; i < numTasks; i++) {
-            System.out.println((i + 1) + "." + tasks.get(i).getTaskDescription());
+            String stringToAdd;
+            if (i == numTasks - 1) {
+                stringToAdd = (i + 1) + "." + tasks.get(i).getTaskDescription();
+            } else {
+                stringToAdd = (i + 1) + "." + tasks.get(i).getTaskDescription() + "\n";
+            }
+            message += stringToAdd;
         }
+        return message;
     }
 
     /**
-     * Removes task at given index.
+     * Removes task at given index and returns a string giving information about which task was removed.
      *
      * @param index Index position of task in list.
      */
-    public void deleteTask(int index, Parser p) {
+    public String deleteTask(int index, Parser p) {
+        String message;
         if (index <= 0 || index > numTasks) {
-            System.out.println("Invalid task index.");
+            message = "Invalid task index.";
         } else {
-            System.out.println("Noted. I've removed this task:");
             index--;
             Task t = tasks.get(index);
-            System.out.println(t.getTaskDescription());
             tasks.remove(t);
             numTasks--;
-            System.out.println("Now you have " + numTasks + " tasks in the list.");
+            message = "Noted. I've removed this task:\n" + t.getTaskDescription()
+                    + "\nNow you have " + numTasks + " tasks in the list.";
 
             // Update hashmap
-            String taskDescription = t.getTaskDescriptionWOIcon();
-            String[] taskDescriptionParts = p.splitStringBySpacing(taskDescription);
+            String taskDescriptionWOIcon = t.getTaskDescriptionWOIcon();
+            String[] taskDescriptionParts = p.splitStringBySpacing(taskDescriptionWOIcon);
             for (String taskDescriptionPart : taskDescriptionParts) {
                 if (stringToTasks.containsKey(taskDescriptionPart)) {
                     List<Task> ll = stringToTasks.get(taskDescriptionPart);
@@ -158,6 +175,7 @@ public class TaskList {
                 }
             }
         }
+        return message;
     }
 
     /**
