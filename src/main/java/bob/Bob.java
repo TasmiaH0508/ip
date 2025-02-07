@@ -32,10 +32,16 @@ public class Bob {
     private static final Storage STORAGE = new Storage();
 
     /**
-     * Exits from program.
+     * Exits from program, saves task data and returns an exit message.
+     *
+     * @return exit message as a string.
      */
-    public static void exit() {
-        System.out.println("Bye. Hope to see you again soon!");
+    public static String handleExitCommand() {
+        String exitMessage = "Bye. Hope to see you again soon!";
+        saveTaskData();
+        parser.closeParser();
+        isEndConversation = true;
+        return exitMessage;
     }
 
     /**
@@ -80,41 +86,49 @@ public class Bob {
     }
 
     /**
-     * Marks task as done.
+     * Marks task as done and returns a message indicating if the task was successfully marked.
      *
      * @param input Input user input which contains the substring "mark" or "unmark" and is expected to end with a number.
+     * @return message as a string.
      */
-    public static void handleMarkCommand(String input) {
+    public static String handleMarkCommand(String input) {
         try {
             int index = parser.getNumberFromString(input);
             boolean isDone = !(parser.prefixedByKeyword(input, "un", ""));
-            TASK_LIST.updateTaskCompletionStatus(index, isDone);
+            String message = TASK_LIST.updateTaskCompletionStatus(index, isDone);
+            return message;
         } catch (NumberFormatException e) {
-            System.out.println("Too many spaces used.");
+            return "Too many spaces used.";
         }
     }
 
     /**
-     * Creates a todo task, which is then added to tasklist.
+     * Creates a todo task, which is then added to tasklist, and returns a message indicating if the task has been added
+     * successfully.
      *
      * @param input Input user input which contains the substring "todo".
+     * @return message as a string.
      */
-    public static void handleTodoCommand(String input) {
+    public static String handleTodoCommand(String input) {
         String taskDescription = parser.removeKeywordFromString(input, "todo");
+        String message;
         if (taskDescription.length() != 0) {
             Task t = new Todo(taskDescription);
-            TASK_LIST.addTask(t,parser);
+            message = TASK_LIST.addTask(t, parser);
         } else {
-            System.out.println("I think you're missing the task description...");
+            message = "I think you're missing the task description...";
         }
+        return message;
     }
 
     /**
-     * Creates a deadline task, which is then added to tasklist.
+     * Creates a deadline task, which is then added to tasklist and returns a message indicating if the task has been
+     * added successfully.
      *
      * @param input Input user input which contains the substring "deadline".
+     * @return message as a string.
      */
-    public static void handleDeadlineCommand(String input) {
+    public static String handleDeadlineCommand(String input) {
         try {
             String taskDescription = parser.removeKeywordFromString(input, "deadline");
             String[] taskDescriptionSegments = parser.splitStringBySlash(taskDescription);
@@ -125,19 +139,22 @@ public class Bob {
             String deadlineString = yearString + "-" + monthString + "-" + dateString;
 
             Task t = new Deadline(taskDescriptionSegments[0], deadlineString);
-            TASK_LIST.addTask(t, parser);
+            String message = TASK_LIST.addTask(t, parser);
+            return message;
         } catch (IndexOutOfBoundsException e) {
-            System.out.println("You may have followed an incorrect format. " +
-                    "Try this format: deadline <task> /by <dd/mm/yyyy>");
+            String message = "You may have followed an incorrect format. " +
+                    "Try this format: deadline <task> /by <dd/mm/yyyy>";
+            return message;
         }
     }
 
     /**
-     * Creates an event task, which is then added to the tasklist.
+     * Creates an event task, which is then added to the tasklist, and returns a message indicating if the task has been
+     * added successfully.
      *
      * @param input Input user input which contains the substring "event".
      */
-    public static void handleEventCommand(String input) {
+    public static String handleEventCommand(String input) {
         try {
             String taskDescription = parser.removeKeywordFromString(input, "event");
             String[] taskDescriptionSegments = parser.splitStringBySlash(taskDescription);
@@ -153,18 +170,23 @@ public class Bob {
             String endTimeString = endYearString + "-" + endMonthString + "-" + endDateString;
 
             Task t = new Event(taskDescriptionSegments[0], startTimeString, endTimeString);
-            TASK_LIST.addTask(t, parser);
+            String message = TASK_LIST.addTask(t, parser);
+            return message;
         } catch (IndexOutOfBoundsException e) {
-            System.out.println("You may have followed an incorrect format. Try this format: event <task> / from " +
-                    "<dd/mm/yyyy> /to <dd/mm/yyyy>");
+            String message = "You may have followed an incorrect format. Try this format: event <task> / from " +
+                    "<dd/mm/yyyy> /to <dd/mm/yyyy>";
+            return message;
         }
     }
 
     /**
-     * Displays the tasks present in the tasklist.
+     * Displays the tasks present in the tasklist and returns a string containing all the tasks.
+     *
+     * @return string containing all the tasks.
      */
-    public static void handleListCommand() {
-        TASK_LIST.displayTasks();
+    public static String handleListCommand() {
+        String message = TASK_LIST.displayTasks();
+        return message;
     }
 
     /**
@@ -172,12 +194,14 @@ public class Bob {
      *
      * @param input Input user input which contains "delete" substring followed by the index of the task to remove.
      */
-    public static void handleDeleteCommand(String input) {
+    public static String handleDeleteCommand(String input) {
         try {
             int index = parser.getNumberFromString(input);
-            TASK_LIST.deleteTask(index, parser);
+            String message = TASK_LIST.deleteTask(index, parser);
+            return message;
         } catch (NumberFormatException e) {
-            System.out.println("Too many spaces used.");
+            String message = "Too many spaces used.";
+            return message;
         }
     }
 
@@ -186,7 +210,7 @@ public class Bob {
      *
      * @param input Input user input.
      */
-    public static void handleSearchCommand(String input) {
+    public static String handleSearchCommand(String input) {
         String[] inputParts = parser.splitStringBySpacing(input);
         Set<Task> alreadyAdded = new HashSet<>();
         List<Task> res = new ArrayList<>();
@@ -201,60 +225,78 @@ public class Bob {
                 }
             }
         }
+        String message;
         if (res.size() != 0) {
-            System.out.println("Here are the matching tasks in your list:");
+            message = "Here are the matching tasks in your list:\n";
             for (int i = 0; i < res.size(); i++) {
                 Task t = res.get(i);
-                String taskDescription = t.getTaskDescription();
-                System.out.println((i + 1) + "." + taskDescription);
+                String taskDescription;
+                if (i == res.size() - 1) {
+                    taskDescription = (i + 1) + "." + t.getTaskDescription();
+                } else {
+                    taskDescription = (i + 1) + "." + t.getTaskDescription() + "\n";
+                }
+                message += taskDescription;
             }
+            return message;
         } else {
-            System.out.println("None of the tasks match the description.");
+            message = "None of the tasks match the description.";
         }
+        return message;
     }
 
 
      /**
-     * Performs tasks based on user input.
+      * Performs tasks based on user input and returns a message string.
+      *
+      * @param input Input is given by the user. Input is "" if the CLI is used.
+      * @param isFromConsole IsFromConsole indicates where the input is being read from, which is either the console or
+      * the GUI.
+      * @return message string
      */
-    public static void chat() {
-        while (!isEndConversation) {
-            String input = parser.parse();
-            try {
-                CommandType commandType = identifyCommandFromInput(input);
-                if (commandType == CommandType.MARK) {
-                    handleMarkCommand(input);
-                } else if (commandType == CommandType.TODO) {
-                    handleTodoCommand(input);
-                } else if (commandType == CommandType.DEADLINE) {
-                    handleDeadlineCommand(input);
-                } else if (commandType == CommandType.EVENT) {
-                    handleEventCommand(input);
-                } else if (commandType == CommandType.LIST) {
-                    handleListCommand();
-                } else if (commandType == CommandType.DELETE) {
-                    handleDeleteCommand(input);
-                } else if (commandType == CommandType.BYE) {
-                    isEndConversation = true;
-                    parser.closeParser();
-                    exit();
-                } else {
-                    handleSearchCommand(input);
-                }
-            } catch (DukeException e) {
-                System.out.println("I really want to help you but I do not know how I can do so." +
-                        "Try another command or give me more info.");
+    public static String chat(String input, boolean isFromConsole) {
+        String outputMessage = "";
+        if (isFromConsole) {
+            input = parser.parse();
+        }
+        try {
+            CommandType commandType = identifyCommandFromInput(input);
+            if (commandType == CommandType.MARK) {
+                outputMessage = handleMarkCommand(input);
+            } else if (commandType == CommandType.TODO) {
+                outputMessage = handleTodoCommand(input);
+            } else if (commandType == CommandType.DEADLINE) {
+                outputMessage = handleDeadlineCommand(input);
+            } else if (commandType == CommandType.EVENT) {
+                outputMessage = handleEventCommand(input);
+            } else if (commandType == CommandType.LIST) {
+                outputMessage = handleListCommand();
+            } else if (commandType == CommandType.DELETE) {
+                outputMessage = handleDeleteCommand(input);
+            } else if (commandType == CommandType.BYE) {
+                outputMessage = handleExitCommand();
+            } else {
+                outputMessage = handleSearchCommand(input);
             }
+            System.out.println(outputMessage);
+            return outputMessage;
+        } catch (DukeException e) {
+            outputMessage = "I really want to help you but I do not know how I can do so." +
+                    "Try another command or give me more info.";
+            System.out.println(outputMessage);
+            return outputMessage;
         }
     }
 
     /**
-     * Greets the user.
+     * Returns a message that is meant to greet the user.
+     *
+     * @return greeting message string.
      */
-    public static void greet() {
-        String name = "Bob";
-        System.out.println("Hello! I'm " + name);
-        System.out.println("What can I do for you?");
+    public static String greet() {
+        String greetingMessage = "Hello! I'm Bob. \nWhat can I do for you?";
+        System.out.println(greetingMessage);
+        return greetingMessage;
     }
 
     /**
@@ -271,10 +313,23 @@ public class Bob {
         STORAGE.writeTaskDataToFile(TASK_LIST);
     }
 
+    /**
+     * Returns appropriate message to user as a string.
+     *
+     * @param input Input is the user input.
+     * @return message as a string.
+     */
+    public String getResponse(String input) {
+        String outputMessage;
+        outputMessage = chat(input, false);
+        return outputMessage;
+    }
+
     public static void main(String[] args) {
         retrieveSavedTaskData();
         greet();
-        chat();
-        saveTaskData();
+        while (!isEndConversation) {
+            chat("", true); // for running from command line
+        }
     }
 }
