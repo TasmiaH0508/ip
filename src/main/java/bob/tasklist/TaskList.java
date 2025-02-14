@@ -65,8 +65,8 @@ public class TaskList {
      * @throws IndexOutOfBoundsException if string contains too few slashes separating the relevant information for a
      * particular task type.
      */
-    public void createAndAddTask(Parser p, String s) throws IndexOutOfBoundsException {
-        TaskType t = getTaskType(p, s);
+    public void createAndAddTask(Parser p, String s) throws IndexOutOfBoundsException, IllegalArgumentException {
+        TaskType t = getTaskType(p, s); // throws illegal argument exception. Otherwise, it returns an enum type
         Task task;
         String[] arr = p.splitStringBySlash(s);
         String taskDescription = arr[2];
@@ -165,7 +165,6 @@ public class TaskList {
             message = "Noted. I've removed this task:\n" + t.getTaskDescription()
                     + "\nNow you have " + numTasks + " tasks in the list.";
 
-            // Update hashmap
             String taskDescriptionWOIcon = t.getTaskDescriptionWOIcon();
             String[] taskDescriptionParts = p.splitStringBySpacing(taskDescriptionWOIcon);
             for (String taskDescriptionPart : taskDescriptionParts) {
@@ -201,11 +200,7 @@ public class TaskList {
      * @return list of tasks, each of which has a task description containing the input keyword.
      */
     public List<Task> getSearchResults(String input) {
-        if (stringToTasks.containsKey(input)) {
-            return stringToTasks.get(input);
-        } else {
-            return null;
-        }
+        return stringToTasks.get(input);
     }
 
     /**

@@ -1,5 +1,7 @@
 package bob.parser;
 
+import bob.dukeException.DukeException;
+
 import java.util.Scanner;
 
 
@@ -33,19 +35,11 @@ public class Parser {
      */
     public boolean prefixedByKeyword(String input, String lookFor, String prefix) {
         int minLen = lookFor.length();
-        int prefixLength = prefix.length();
         if (input.length() < minLen) {
             return false;
         } else {
-
-            boolean containsLookFor = input.substring(0, minLen).equals(lookFor);
-            boolean containsPrefixAndLookFor = false;
-
-            if (input.length() >= minLen + prefixLength) {
-                lookFor = prefix + lookFor;
-                containsPrefixAndLookFor = input.substring(0, minLen + prefixLength).equals(lookFor);
-            }
-
+            boolean containsLookFor = input.startsWith(lookFor);
+            boolean containsPrefixAndLookFor = input.startsWith(prefix + lookFor);
             return containsLookFor || containsPrefixAndLookFor;
         }
     }
@@ -94,7 +88,7 @@ public class Parser {
      * @return string with substring removed.
      */
     public String removeKeywordFromString(String s, String toRemove) {
-        // this method call is always preceded by the method call to containsKeyword
+        // this method call is always preceded by the method call to prefixedByKeyword
         int startIndex = toRemove.length();
         String stringNoKeyword = s.substring(startIndex);
         return stringNoKeyword;

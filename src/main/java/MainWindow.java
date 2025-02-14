@@ -1,4 +1,4 @@
-//package application;
+
 
 import bob.Bob;
 import javafx.fxml.FXML;
@@ -34,8 +34,8 @@ public class MainWindow extends AnchorPane {
     /** Injects the Bob instance */
     public void setBob(Bob b) {
         bob = b;
-        Bob.retrieveSavedTaskData();
-        String response = Bob.greet();
+        String messageFromDataRetrieval = Bob.retrieveSavedTaskData();
+        String response = Bob.greet() + messageFromDataRetrieval;
         dialogContainer.getChildren().addAll(
                 DialogBox.getDukeDialog(response, dukeImage)
         );

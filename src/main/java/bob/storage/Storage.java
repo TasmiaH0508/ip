@@ -21,13 +21,15 @@ import java.util.Scanner;
 public class Storage {
 
     /**
-     * Loads saved tasks from "TaskData.txt" file.
+     * Loads saved tasks from "TaskData.txt" file and returns a message indicating if tasks have been loaded successfully.
      *
      * @param p P parser.
      * @param taskList taskList list of tasks.
+     * @return a message as a string indicating if tasks haven been successfully loaded.
      */
-    public void loadSavedTasks(Parser p, TaskList taskList) {
+    public String loadSavedTasks(Parser p, TaskList taskList) {
         File savedTaskData = new File("TaskData.txt");
+        String message;
         try {
             if (savedTaskData.exists()) {
                 Scanner fileScanner = new Scanner(savedTaskData);
@@ -42,20 +44,25 @@ public class Storage {
             } else {
                 savedTaskData.createNewFile();
             }
+            message = ""; // design decision: do not inform user that task data has been retrieved
+            return message;
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            message = "Creation of new file not successful.";
+            return message;
         } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
-            System.out.println("Some lines in the file appear corrupted. " +
-                    "Attempting to remove and recover the remaining data...");
+            message = "Some lines in the file appear corrupted. " +
+                    "Attempting to remove and recover the remaining data...";
+            return message;
         }
     }
 
     /**
-     * Saves tasks to "TaskData.txt" file.
+     * Saves tasks to "TaskData.txt" file and returns a boolean flag indication if all the data has been saved.
      *
-     * @param taskList TaskList list of tasks to be saved
+     * @param taskList TaskList list of tasks to be saved.
+     * @return a boolean flag indicating if task data has been successfully saved
      */
-    public void writeTaskDataToFile(TaskList taskList) {
+    public boolean writeTaskDataToFile(TaskList taskList) {
         List<Task> tasks = taskList.getTaskList();
         String textToAdd = "";
         for (int i = 0; i < tasks.size(); i++) {
@@ -67,12 +74,16 @@ public class Storage {
                 textToAdd += taskString + System.lineSeparator();
             }
         }
+        boolean isSaved;
         try {
             FileWriter fw = new FileWriter("TaskData.txt");
             fw.write(textToAdd);
             fw.close();
+            isSaved = true;
+            return isSaved;
         } catch (IOException e) {
-            System.out.println("Your tasks could not be saved. Sorry for the inconvenience.");
+            isSaved = false;
+            return isSaved;
         }
     }
 }
