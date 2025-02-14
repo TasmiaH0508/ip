@@ -149,8 +149,7 @@ public class Bob {
                 dateString = "0" + dateString;
             }
             String monthString = taskDescriptionSegments[2];
-            assert !monthString.isEmpty() && monthString.length() <= 2: "The month must have at least 1 or " +
-                    "at most 2 digits.";
+            assert monthString.length() <= 2 : "The month must have at least 1 or at most 2 digits.";
             if (monthString.length() == 1) {
                 monthString = "0" + monthString;
             }
@@ -183,37 +182,33 @@ public class Bob {
             assert taskDescriptionSegments[1].startsWith("from ") : "The segment of the task description must have" +
                     " the prefix: \"from \"";
             String startDateString = parser.removeKeywordFromString(taskDescriptionSegments[1], "from ");
-            assert startDateString.length() <= 2: "The date must have at least 1 or " +
-                    "at most 2 digits.";
+            assert startDateString.length() <= 2 : "The date must have at least 1 or at most 2 digits.";
             if (startDateString.length() == 1) {
                 startDateString = "0" + startDateString;
             }
             String startMonthString = taskDescriptionSegments[2];
-            assert startMonthString.length() <= 2: "The month must have at least 1 or " +
-                    "at most 2 digits.";
+            assert startMonthString.length() <= 2 : "The month must have at least 1 or at most 2 digits.";
             if (startMonthString.length() == 1) {
                 startMonthString = "0" + startMonthString;
             }
             String startYearString = taskDescriptionSegments[3].substring(0, 4);
-            assert startYearString.length() == 4: "The year must have 4 digits.";
+            assert startYearString.length() == 4 : "The year must have 4 digits.";
             String startTimeString = startYearString + "-" + startMonthString + "-" + startDateString;
 
             assert taskDescriptionSegments[4].startsWith("to ") : "The segment of the task description must have" +
                     " the prefix: \"to \"";
             String endDateString = parser.removeKeywordFromString(taskDescriptionSegments[4], "to ");
-            assert !endDateString.isEmpty() && endDateString.length() <= 2: "The date must have at least 1 or " +
-                    "at most 2 digits.";
+            assert endDateString.length() <= 2 : "The date must have at least 1 or at most 2 digits.";
             if (endDateString.length() == 1) {
                 endDateString = "0" + endDateString;
             }
             String endMonthString = taskDescriptionSegments[5];
-            assert !endMonthString.isEmpty() && endMonthString.length() <= 2: "The month must have at least 1 or " +
-                    "at most 2 digits.";
+            assert endMonthString.length() <= 2 : "The month must have at least 1 or at most 2 digits.";
             if (endMonthString.length() == 1) {
                 endMonthString = "0" + endMonthString;
             }
             String endYearString = taskDescriptionSegments[6];
-            assert endYearString.length() == 4: "The year must have 4 digits.";
+            assert endYearString.length() == 4 : "The year must have 4 digits.";
             String endTimeString = endYearString + "-" + endMonthString + "-" + endDateString;
 
             Task t = new Event(taskDescriptionSegments[0], startTimeString, endTimeString);
