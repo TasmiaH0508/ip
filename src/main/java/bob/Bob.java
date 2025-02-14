@@ -37,10 +37,15 @@ public class Bob {
      * @return exit message as a string.
      */
     public static String handleExitCommand() {
-        String exitMessage = "Bye. Hope to see you again soon!";
-        saveTaskData();
         parser.closeParser();
         isEndConversation = true;
+        String exitMessage = "Bye. Hope to see you again soon!\n";
+        boolean isDataSaved = STORAGE.writeTaskDataToFile(TASK_LIST);
+        if (isDataSaved) {
+            exitMessage += "Task Data saved successfully.";
+        } else {
+            exitMessage += "Your tasks could not be saved. Sorry for the inconvenience.";
+        }
         return exitMessage;
     }
 
@@ -213,25 +218,30 @@ public class Bob {
     public static String handleSearchCommand(String input) {
         String[] inputParts = parser.splitStringBySpacing(input);
         Set<Task> alreadyAdded = new HashSet<>();
-        List<Task> res = new ArrayList<>();
+        List<Task> searchResults = new ArrayList<>();
+
         for (String inputPart : inputParts) {
-            List<Task> searchResults = TASK_LIST.getSearchResults(inputPart);
-            if (searchResults != null) {
-                for (Task searchResult : searchResults) {
-                    if (!alreadyAdded.contains(searchResult)) {
-                        alreadyAdded.add(searchResult);
-                        res.add(searchResult);
-                    }
-                }
+            List<Task> searchResultsForWord = TASK_LIST.getSearchResults(inputPart);
+            if (searchResultsForWord != null) {
+                searchResults.addAll(searchResultsForWord);
             }
         }
+
+        for (Task searchResult : searchResults) {
+            if (!alreadyAdded.contains(searchResult)) {
+                alreadyAdded.add(searchResult);
+            } else {
+                searchResults.remove(searchResult);
+            }
+        }
+
         String message;
-        if (res.size() != 0) {
+        if (searchResults.size() != 0) {
             message = "Here are the matching tasks in your list:\n";
-            for (int i = 0; i < res.size(); i++) {
-                Task t = res.get(i);
+            for (int i = 0; i < searchResults.size(); i++) {
+                Task t = searchResults.get(i);
                 String taskDescription;
-                if (i == res.size() - 1) {
+                if (i == searchResults.size() - 1) {
                     taskDescription = (i + 1) + "." + t.getTaskDescription();
                 } else {
                     taskDescription = (i + 1) + "." + t.getTaskDescription() + "\n";
@@ -255,10 +265,10 @@ public class Bob {
       * @return message string
      */
     public static String chat(String input, boolean isFromConsole) {
-        String outputMessage = "";
         if (isFromConsole) {
             input = parser.parse();
         }
+        String outputMessage;
         try {
             CommandType commandType = identifyCommandFromInput(input);
             if (commandType == CommandType.MARK) {
@@ -294,23 +304,23 @@ public class Bob {
      * @return greeting message string.
      */
     public static String greet() {
-        String greetingMessage = "Hello! I'm Bob. \nWhat can I do for you?";
+        String greetingMessage = "Hello! I'm Bob. " +
+                "Remember to say \"bye\" if you want me to remember all the tasks you've told me about..." +
+                "\nSo, what can I do for you?";
         System.out.println(greetingMessage);
         return greetingMessage;
     }
 
     /**
-     * Loads saved tasks from hard disc, if present.
+     * Loads saved tasks from hard disc, if present and returns a message indicating if the saved tasks were
+     * successfully loaded.
+     *
+     * @return message as a string.
      */
-    public static void retrieveSavedTaskData() {
-        STORAGE.loadSavedTasks(parser, TASK_LIST);
-    }
-
-    /**
-     * Saves tasks in task list to hard disc.
-     */
-    public static void saveTaskData() {
-        STORAGE.writeTaskDataToFile(TASK_LIST);
+    public static String retrieveSavedTaskData() {
+        String message = STORAGE.loadSavedTasks(parser, TASK_LIST);
+        System.out.println(message);
+        return message;
     }
 
     /**
@@ -320,8 +330,7 @@ public class Bob {
      * @return message as a string.
      */
     public String getResponse(String input) {
-        String outputMessage;
-        outputMessage = chat(input, false);
+        String outputMessage = chat(input, false);
         return outputMessage;
     }
 
