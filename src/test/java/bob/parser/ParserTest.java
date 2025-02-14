@@ -51,6 +51,10 @@ public class ParserTest {
         String input2 = "3 4";
         assertEquals(4, p.getNumberFromString(input2));
 
+        // test 3
+        String input3 = "3";
+        assertEquals(3, p.getNumberFromString(input3));
+
         p.closeParser();
     }
 

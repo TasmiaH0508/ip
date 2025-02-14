@@ -14,10 +14,7 @@ import bob.tasks.Task;
 import bob.tasks.Todo;
 
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents the chatbot named Bob.
@@ -99,9 +96,35 @@ public class Bob {
      */
     public static String handleMarkCommand(String input) {
         try {
-            int index = parser.getNumberFromString(input);
             boolean isDone = !(parser.prefixedByKeyword(input, "un", ""));
-            String message = TASK_LIST.updateTaskCompletionStatus(index, isDone);
+            String prefix;
+            if (isDone) {
+                prefix = "";
+            } else {
+                prefix = "un";
+            }
+            String numString = parser.removeKeywordFromString(input, prefix + "mark");
+            String[] numStringParts = parser.splitStringByComma(numString);
+            int numIndices = numStringParts.length;
+            int[] indicesToMark = new int[numIndices];
+            for (int i = 0; i < numIndices; i++) {
+                indicesToMark[i] = parser.getNumberFromString(numStringParts[i]);
+            }
+
+            String message;
+            if (isDone) {
+                message = "Nice! I have marked these tasks as done:\n";
+            } else {
+                message = "OK, I've marked this task as not done yet:\n";
+            }
+
+            for (int i = 0; i < numIndices; i++) {
+                if (i == numIndices - 1) {
+                    message += TASK_LIST.updateTaskCompletionStatus(indicesToMark[i], isDone);
+                } else {
+                    message += TASK_LIST.updateTaskCompletionStatus(indicesToMark[i], isDone) + "\n";
+                }
+            }
             return message;
         } catch (NumberFormatException e) {
             return "Too many spaces used.";
@@ -238,8 +261,25 @@ public class Bob {
      */
     public static String handleDeleteCommand(String input) {
         try {
-            int index = parser.getNumberFromString(input);
-            String message = TASK_LIST.deleteTask(index, parser);
+            String message = "Noted. I've removed the following task(s):\n";
+            String numString = parser.removeKeywordFromString(input, "delete");
+            String[] numStringParts = parser.splitStringByComma(numString);
+
+            int numIndices = numStringParts.length;
+            int[] indicesOfTasksToRemove = new int[numIndices];
+            for (int i = 0; i < numIndices; i++) {
+                indicesOfTasksToRemove[i] = parser.getNumberFromString(numStringParts[i]);
+            }
+            Arrays.sort(indicesOfTasksToRemove);
+            for (int i = 0; i < numIndices; i++) {
+                indicesOfTasksToRemove[i] -= i;
+            }
+
+            for (int indexOfTaskToRemove : indicesOfTasksToRemove) {
+                message += TASK_LIST.deleteTask(indexOfTaskToRemove, parser) + "\n";
+            }
+            int numRemainingTasks = TASK_LIST.getNumTasks();
+            message += "Now you have " + numRemainingTasks + " tasks in the list.";
             return message;
         } catch (NumberFormatException e) {
             String message = "Too many spaces used.";

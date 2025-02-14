@@ -110,23 +110,19 @@ public class TaskList {
      * @return message as a string
      */
     public String updateTaskCompletionStatus(int index, boolean isDone) {
-        String message;
+        String taskDescription;
         if (index <= 0 || index > numTasks) {
-            message = "Invalid task index.";
-        } else {
-            index--;
-            String taskDescription;
-            if (isDone) {
-                tasks.get(index).setAsDone();
-                taskDescription = tasks.get(index).getTaskDescription();
-                message = "Nice! I have marked this task as done:\n" + taskDescription;
-            } else {
-                tasks.get(index).setAsNotDone();
-                taskDescription = tasks.get(index).getTaskDescription();
-                message = "OK, I've marked this task as not done yet:\n" + taskDescription;
-            }
+            taskDescription = ""; // The task description is only returned iff the marking was successful.
+            return taskDescription;
         }
-        return message;
+        index--;
+        if (isDone) {
+            tasks.get(index).setAsDone();
+        } else {
+            tasks.get(index).setAsNotDone();
+        }
+        taskDescription = tasks.get(index).getTaskDescription();
+        return taskDescription;
     }
 
     /**
@@ -152,29 +148,39 @@ public class TaskList {
      * Removes task at given index and returns a string giving information about which task was removed.
      *
      * @param index Index position of task in list.
+     * @param p P parser.
+     * @return task description of task deleted if deletion was successful.
      */
     public String deleteTask(int index, Parser p) {
-        String message;
+        String taskDescription;
         if (index <= 0 || index > numTasks) {
-            message = "Invalid task index.";
-        } else {
-            index--;
-            Task t = tasks.get(index);
-            tasks.remove(t);
-            numTasks--;
-            message = "Noted. I've removed this task:\n" + t.getTaskDescription()
-                    + "\nNow you have " + numTasks + " tasks in the list.";
+            taskDescription = "";
+            return taskDescription; // The task description is only returned iff the deletion was successful.
+        }
+        index--;
+        Task t = tasks.get(index);
+        tasks.remove(t);
+        numTasks--;
+        taskDescription = t.getTaskDescription();
 
-            String taskDescriptionWOIcon = t.getTaskDescriptionWOIcon();
-            String[] taskDescriptionParts = p.splitStringBySpacing(taskDescriptionWOIcon);
-            for (String taskDescriptionPart : taskDescriptionParts) {
-                if (stringToTasks.containsKey(taskDescriptionPart)) {
-                    List<Task> ll = stringToTasks.get(taskDescriptionPart);
-                    ll.remove(t);
-                }
+        String taskDescriptionWOIcon = t.getTaskDescriptionWOIcon();
+        String[] taskDescriptionParts = p.splitStringBySpacing(taskDescriptionWOIcon);
+        for (String taskDescriptionPart : taskDescriptionParts) {
+            if (stringToTasks.containsKey(taskDescriptionPart)) {
+                List<Task> ll = stringToTasks.get(taskDescriptionPart);
+                ll.remove(t);
             }
         }
-        return message;
+        return taskDescription;
+    }
+
+    /**
+     * Returns the number of tasks present in task list.
+     *
+     * @return number of tasks in task list.
+     */
+    public int getNumTasks() {
+        return numTasks;
     }
 
     /**

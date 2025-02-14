@@ -48,7 +48,7 @@ public class Parser {
      * Returns number existing in the second substring, where the first and second substring where originally separated
      * with a spacing.
      *
-     * @param s S string consisting 2 substrings separated by a space character.
+     * @param s S string consisting 1 or 2 substrings separated by a space character.
      * @return number in second substring.
      * @throws NumberFormatException if excess spacing is used.
      */
@@ -56,6 +56,8 @@ public class Parser {
         String[] parts = s.split(" ");
         if (parts.length == 2) {
             return Integer.parseInt(parts[1]);
+        } else if (parts.length == 1) {
+            return Integer.parseInt(parts[0]);
         } else {
             throw new NumberFormatException("Excess spacing was used.");
         }
@@ -78,6 +80,16 @@ public class Parser {
      */
     public String[] splitStringBySpacing(String s) {
         return s.split(" ");
+    }
+
+    /**
+     * Returns an array of substrings originally separated by commas.
+     *
+     * @param s S string containing substrings separated by commas.
+     * @return array of substrings
+     */
+    public String[] splitStringByComma(String s) {
+        return s.split(",");
     }
 
     /**
