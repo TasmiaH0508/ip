@@ -255,10 +255,10 @@ public class Bob {
       * @return message string
      */
     public static String chat(String input, boolean isFromConsole) {
-        String outputMessage = "";
         if (isFromConsole) {
             input = parser.parse();
         }
+        String outputMessage;
         try {
             CommandType commandType = identifyCommandFromInput(input);
             if (commandType == CommandType.MARK) {
