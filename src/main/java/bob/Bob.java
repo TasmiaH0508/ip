@@ -13,6 +13,7 @@ import bob.tasks.Event;
 import bob.tasks.Task;
 import bob.tasks.Todo;
 
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -142,7 +143,7 @@ public class Bob {
             assert taskDescriptionSegments[1].startsWith("by ") : "The deadline segment of the task description must have" +
                     " the prefix: \"by \"";
             String dateString = parser.removeKeywordFromString(taskDescriptionSegments[1], "by ");
-            assert !dateString.isEmpty() && dateString.length() <= 2: "The date must have at least 1 or " +
+            assert dateString.length() <= 2: "The date must have at least 1 or " +
                     "at most 2 digits.";
             if (dateString.length() == 1) {
                 dateString = "0" + dateString;
@@ -160,7 +161,7 @@ public class Bob {
             Task t = new Deadline(taskDescriptionSegments[0], deadlineString);
             String message = TASK_LIST.addTask(t, parser);
             return message;
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | DateTimeParseException e) {
             String message = "You may have followed an incorrect format. " +
                     "Try this format: deadline <task> /by <dd/mm/yyyy>";
             return message;
@@ -182,13 +183,13 @@ public class Bob {
             assert taskDescriptionSegments[1].startsWith("from ") : "The segment of the task description must have" +
                     " the prefix: \"from \"";
             String startDateString = parser.removeKeywordFromString(taskDescriptionSegments[1], "from ");
-            assert !startDateString.isEmpty() && startDateString.length() <= 2: "The date must have at least 1 or " +
+            assert startDateString.length() <= 2: "The date must have at least 1 or " +
                     "at most 2 digits.";
             if (startDateString.length() == 1) {
                 startDateString = "0" + startDateString;
             }
             String startMonthString = taskDescriptionSegments[2];
-            assert !startMonthString.isEmpty() && startMonthString.length() <= 2: "The month must have at least 1 or " +
+            assert startMonthString.length() <= 2: "The month must have at least 1 or " +
                     "at most 2 digits.";
             if (startMonthString.length() == 1) {
                 startMonthString = "0" + startMonthString;
@@ -218,7 +219,7 @@ public class Bob {
             Task t = new Event(taskDescriptionSegments[0], startTimeString, endTimeString);
             String message = TASK_LIST.addTask(t, parser);
             return message;
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | DateTimeParseException e) {
             String message = "You may have followed an incorrect format. Try this format: event <task> / from " +
                     "<dd/mm/yyyy> /to <dd/mm/yyyy>";
             return message;
