@@ -145,6 +145,23 @@ public class TaskList {
     }
 
     /**
+     * Returns the indices of the completed tasks. The indices follow 1-indexing.
+     *
+     * @return a list of indices of the tasks that are complete.
+     */
+    public List<Integer> getIndicesOfCompletedTasks() {
+        List<Integer> completedTasks = new ArrayList<>();
+        for (int i = 0; i < tasks.size(); i++) {
+            Task t = tasks.get(i);
+            if (t.isComplete()) {
+                int indexOfTask = i + 1;
+                completedTasks.add(indexOfTask);
+            }
+        }
+        return completedTasks;
+    }
+
+    /**
      * Removes task at given index and returns a string giving information about which task was removed.
      *
      * @param index Index position of task in list.

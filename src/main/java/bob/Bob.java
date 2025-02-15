@@ -24,9 +24,9 @@ public class Bob {
     private static Parser parser = new Parser();
     private static boolean isEndConversation = false;
     private static final TaskList TASK_LIST = new TaskList();
-    private static final String[] COMMANDS = {"mark", "todo", "deadline", "event" , "bye", "list", "delete", ""};
-    private static final String[] PREFIX_FOR_COMMANDS = {"un", "", "", "", "", "", "", ""};
-    private enum CommandType {MARK, TODO, DEADLINE, EVENT, BYE, LIST, DELETE, SEARCH};
+    private static final String[] COMMANDS = {"mark", "todo", "deadline", "event" , "bye", "list", "delete", "clean", ""};
+    private static final String[] PREFIX_FOR_COMMANDS = {"un", "", "", "", "", "", "", "", ""};
+    private enum CommandType {MARK, TODO, DEADLINE, EVENT, BYE, LIST, DELETE, CLEAN, SEARCH};
     private static final Storage STORAGE = new Storage();
 
     /**
@@ -68,6 +68,8 @@ public class Bob {
             return "list";
         } else if (t == CommandType.DELETE) {
             return "delete";
+        } else if (t == CommandType.CLEAN) {
+            return "clean";
         } else {
             return "search";
         }
@@ -266,25 +268,60 @@ public class Bob {
             String[] numStringParts = parser.splitStringByComma(numString);
 
             int numIndices = numStringParts.length;
-            int[] indicesOfTasksToRemove = new int[numIndices];
+            List<Integer> indicesOfTasksToRemove = new ArrayList<>();
             for (int i = 0; i < numIndices; i++) {
-                indicesOfTasksToRemove[i] = parser.getNumberFromString(numStringParts[i]);
+                int indexOfTask = parser.getNumberFromString(numStringParts[i]);
+                indicesOfTasksToRemove.add(indexOfTask);
             }
-            Arrays.sort(indicesOfTasksToRemove);
-            for (int i = 0; i < numIndices; i++) {
-                indicesOfTasksToRemove[i] -= i;
-            }
+            String descriptionsOfRemovedTasks = deleteTasksByIndex(indicesOfTasksToRemove);
 
-            for (int indexOfTaskToRemove : indicesOfTasksToRemove) {
-                message += TASK_LIST.deleteTask(indexOfTaskToRemove, parser) + "\n";
-            }
-            int numRemainingTasks = TASK_LIST.getNumTasks();
-            message += "Now you have " + numRemainingTasks + " tasks in the list.";
+            message += descriptionsOfRemovedTasks;
             return message;
         } catch (NumberFormatException e) {
             String message = "Too many spaces used.";
             return message;
         }
+    }
+
+    /**
+     * Takes a list of task indices and removes the tasks. Returns a string of the descriptions of the tasks that were
+     * removed.
+     *
+     * @param indicesOfTasksToRemove IndicesOfTasksToRemove is the list of the task indices to remove.
+     * @return message string containing descriptions of all the removed tasks.
+     */
+    public static String deleteTasksByIndex(List<Integer> indicesOfTasksToRemove) {
+        indicesOfTasksToRemove.sort(Integer::compare);
+        List<Integer> recalibratedIndicesOfTasksToRemove = new ArrayList<>();
+        int numTasks = indicesOfTasksToRemove.size();
+        for (int i = 0; i < numTasks; i++) {
+            int originalTaskIndex = indicesOfTasksToRemove.get(i);
+            int recalibratedIndex = originalTaskIndex - i;
+            recalibratedIndicesOfTasksToRemove.add(recalibratedIndex);
+        }
+
+        String message = "";
+        for (int indexToRemove : recalibratedIndicesOfTasksToRemove) {
+            message += TASK_LIST.deleteTask(indexToRemove, parser) + "\n";
+        }
+        int numRemainingTasks = TASK_LIST.getNumTasks();
+        message += "Now you have " + numRemainingTasks + " tasks in the list.";
+        return message;
+    }
+
+    /**
+     * Removes all completed tasks from list and returns a message string showing all the removed tasks.
+     *
+     * @return message string showing all the removed tasks.
+     */
+    public static String handleCleanCommand() {
+        List<Integer> indicesOfCompletedTasks = TASK_LIST.getIndicesOfCompletedTasks();
+
+        String message = "I have cleaned your task list of the following completed tasks:\n";
+        String descriptionsOfRemovedTasks = deleteTasksByIndex(indicesOfCompletedTasks);
+
+        message += descriptionsOfRemovedTasks;
+        return message;
     }
 
     /**
@@ -362,6 +399,8 @@ public class Bob {
                 outputMessage = handleDeleteCommand(input);
             } else if (commandType == CommandType.BYE) {
                 outputMessage = handleExitCommand();
+            } else if (commandType == CommandType.CLEAN) {
+                outputMessage = handleCleanCommand();
             } else {
                 outputMessage = handleSearchCommand(input);
             }

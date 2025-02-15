@@ -40,6 +40,15 @@ public class Task {
     }
 
     /**
+     * Returns a boolean about whether a task is complete.
+     *
+     * @return a boolean flag indicating if a task is complete.
+     */
+    public boolean isComplete() {
+        return isComplete;
+    }
+
+    /**
      * Returns task description.
      *
      * @return taskname prefixed by status icon.
