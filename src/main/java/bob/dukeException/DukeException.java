@@ -1,4 +1,4 @@
-package bob.dukeException;
+package bob.dukeexception;
 
 public class DukeException extends Exception {
     public DukeException(String s) {

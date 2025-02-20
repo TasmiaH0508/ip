@@ -1,6 +1,6 @@
 package bob;
 
-import bob.dukeException.DukeException;
+import bob.dukeexception.DukeException;
 
 import org.junit.jupiter.api.Test;
 

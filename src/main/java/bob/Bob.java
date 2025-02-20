@@ -1,6 +1,6 @@
 package bob;
 
-import bob.dukeException.DukeException;
+import bob.dukeexception.DukeException;
 
 import bob.parser.Parser;
 
