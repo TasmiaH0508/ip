@@ -1,4 +1,4 @@
-package bob.tasks;
+package eve.tasks;
 
 /**
  * Represents todo event, which is a type of task.

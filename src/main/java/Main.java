@@ -1,6 +1,6 @@
 import java.io.IOException;
 
-import bob.Bob;
+import eve.Eve;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    private Bob bob = new Bob();
+    private Eve eve = new Eve();
 
     @Override
     public void start(Stage stage) {
@@ -19,7 +19,7 @@ public class Main extends Application {
             AnchorPane ap = fxmlLoader.load();
             Scene scene = new Scene(ap);
             stage.setScene(scene);
-            fxmlLoader.<MainWindow>getController().setBob(bob);  // inject the Bob instance
+            fxmlLoader.<MainWindow>getController().setEve(eve);  // inject the Eve instance
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

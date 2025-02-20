@@ -1,17 +1,17 @@
-package bob;
+package eve;
 
-import bob.dukeexception.DukeException;
+import eve.dukeexception.DukeException;
 
-import bob.parser.Parser;
+import eve.parser.Parser;
 
-import bob.storage.Storage;
+import eve.storage.Storage;
 
-import bob.tasklist.TaskList;
+import eve.tasklist.TaskList;
 
-import bob.tasks.Deadline;
-import bob.tasks.Event;
-import bob.tasks.Task;
-import bob.tasks.Todo;
+import eve.tasks.Deadline;
+import eve.tasks.Event;
+import eve.tasks.Task;
+import eve.tasks.Todo;
 
 import java.time.format.DateTimeParseException;
 
@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Represents the chatbot named Bob.
+ * Represents the chatbot named Eve.
  */
-public class Bob {
+public class Eve {
 
     private static Parser parser = new Parser();
     private static boolean isEndConversation = false;
@@ -424,7 +424,7 @@ public class Bob {
      * @return greeting message string.
      */
     public static String greet() {
-        String greetingMessage = "Hello! I'm Bob. " +
+        String greetingMessage = "Hello! I'm Eve. " +
                 "Remember to say \"bye\" if you want me to remember all the tasks you've told me about..." +
                 "\nSo, what can I do for you?";
         System.out.println(greetingMessage);

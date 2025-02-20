@@ -1,11 +1,11 @@
-package bob.tasklist;
+package eve.tasklist;
 
-import bob.parser.Parser;
+import eve.parser.Parser;
 
-import bob.tasks.Deadline;
-import bob.tasks.Event;
-import bob.tasks.Task;
-import bob.tasks.Todo;
+import eve.tasks.Deadline;
+import eve.tasks.Event;
+import eve.tasks.Task;
+import eve.tasks.Todo;
 
 import java.util.ArrayList;
 import java.util.HashMap;

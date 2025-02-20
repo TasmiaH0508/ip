@@ -1,4 +1,4 @@
-package bob.tasks;
+package eve.tasks;
 
 /**
  * Represents a task object.

@@ -1,7 +1,6 @@
-package bob.parser;
+package eve.parser;
 
 import java.util.Scanner;
-
 
 /**
  * Represents a parser, which is an object that can read from the console and perform operations on strings.

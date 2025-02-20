@@ -1,4 +1,5 @@
-import bob.Bob;
+import eve.Eve;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -19,7 +20,7 @@ public class MainWindow extends AnchorPane {
     @FXML
     private Button sendButton;
 
-    private Bob bob;
+    private Eve eve;
 
     private Image userImage = new Image(this.getClass().getResourceAsStream("/images/DaUser.png"));
     private Image dukeImage = new Image(this.getClass().getResourceAsStream("/images/DaDuke.png"));
@@ -29,11 +30,11 @@ public class MainWindow extends AnchorPane {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
     }
 
-    /** Injects the Bob instance */
-    public void setBob(Bob b) {
-        bob = b;
-        String messageFromDataRetrieval = Bob.retrieveSavedTaskData();
-        String response = Bob.greet() + messageFromDataRetrieval;
+    /** Injects the Eve instance */
+    public void setEve(Eve b) {
+        eve = b;
+        String messageFromDataRetrieval = Eve.retrieveSavedTaskData();
+        String response = Eve.greet() + messageFromDataRetrieval;
         dialogContainer.getChildren().addAll(
                 DialogBox.getDukeDialog(response, dukeImage)
         );
@@ -46,7 +47,7 @@ public class MainWindow extends AnchorPane {
     @FXML
     private void handleUserInput() {
         String input = userInput.getText();
-        String response = bob.getResponse(input);
+        String response = eve.getResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
                 DialogBox.getDukeDialog(response, dukeImage)
