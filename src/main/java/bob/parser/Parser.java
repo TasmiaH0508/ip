@@ -1,7 +1,5 @@
 package bob.parser;
 
-import bob.dukeException.DukeException;
-
 import java.util.Scanner;
 
 
