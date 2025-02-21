@@ -147,11 +147,11 @@ public class Eve {
     public static String handleTodoCommand(String input) {
         String taskDescription = parser.removeKeywordFromString(input, "todo");
         String message;
-        if (!taskDescription.isEmpty()) {
+        if (parser.isEmptyMessage(taskDescription)) {
+            message = "I think you're missing the task description...";
+        } else {
             Task t = new Todo(taskDescription);
             message = TASK_LIST.addTask(t, parser);
-        } else {
-            message = "I think you're missing the task description...";
         }
         return message;
     }
@@ -186,8 +186,13 @@ public class Eve {
             assert yearString.length() == 4: "The year must have 4 digits.";
             String deadlineString = yearString + "-" + monthString + "-" + dateString;
 
-            Task t = new Deadline(taskDescriptionSegments[0], deadlineString);
-            String message = TASK_LIST.addTask(t, parser);
+            String message;
+            if (parser.isEmptyMessage(taskDescriptionSegments[0])) {
+                message = "The description of the task cannot be empty.";
+            } else {
+                Task t = new Deadline(taskDescriptionSegments[0], deadlineString);
+                message = TASK_LIST.addTask(t, parser);
+            }
             return message;
         } catch (IndexOutOfBoundsException | DateTimeParseException e) {
             String message = "You may have followed an incorrect format. " +
@@ -240,8 +245,13 @@ public class Eve {
             assert endYearString.length() == 4 : "The year must have 4 digits.";
             String endTimeString = endYearString + "-" + endMonthString + "-" + endDateString;
 
-            Task t = new Event(taskDescriptionSegments[0], startTimeString, endTimeString);
-            String message = TASK_LIST.addTask(t, parser);
+            String message;
+            if (parser.isEmptyMessage(taskDescriptionSegments[0])) {
+                message = "The description cannot be empty.";
+            } else {
+                Task t = new Event(taskDescriptionSegments[0], startTimeString, endTimeString);
+                message = TASK_LIST.addTask(t, parser);
+            }
             return message;
         } catch (IndexOutOfBoundsException | DateTimeParseException e) {
             String message = "You may have followed an incorrect format. Try this format: event <task> / from " +
@@ -267,7 +277,7 @@ public class Eve {
      */
     public static String handleDeleteCommand(String input) {
         try {
-            String message = "Noted. I've removed the following task(s):\n";
+            String message = "Noted. I've removed the following task(s):\n";;
             String numString = parser.removeKeywordFromString(input, "delete");
             String[] numStringParts = parser.splitStringByComma(numString);
 
@@ -279,7 +289,14 @@ public class Eve {
             }
             String descriptionsOfRemovedTasks = deleteTasksByIndex(indicesOfTasksToRemove);
 
-            message += descriptionsOfRemovedTasks;
+            if (descriptionsOfRemovedTasks.isEmpty()) {
+                int numRemainingTasks = TASK_LIST.getNumTasks();
+                message = "No tasks were deleted. Check that the indices are at least 1 and at most "
+                        + numRemainingTasks + ".";
+            } else {
+                message += descriptionsOfRemovedTasks;
+            }
+
             return message;
         } catch (NumberFormatException e) {
             String message = "Too many spaces used.";
@@ -305,9 +322,19 @@ public class Eve {
         }
 
         String message = "";
+        int numDeletedTasks = 0;
         for (int indexToRemove : recalibratedIndicesOfTasksToRemove) {
-            message += TASK_LIST.deleteTask(indexToRemove, parser) + "\n";
+            String taskDescriptionOfDeletedTask = TASK_LIST.deleteTask(indexToRemove, parser);
+            if (!taskDescriptionOfDeletedTask.isEmpty()) {
+                message += taskDescriptionOfDeletedTask + "\n";
+                numDeletedTasks++;
+            }
         }
+
+        if (numDeletedTasks == 0) {
+            return message;
+        }
+
         int numRemainingTasks = TASK_LIST.getNumTasks();
         message += "Now you have " + numRemainingTasks + " tasks in the list.";
         return message;
@@ -408,7 +435,9 @@ public class Eve {
             } else {
                 outputMessage = handleSearchCommand(input);
             }
-            System.out.println(outputMessage);
+            if (isFromConsole) {
+                System.out.println(outputMessage);
+            }
             return outputMessage;
         } catch (DukeException e) {
             outputMessage = "I really want to help you but I do not know how I can do so." +

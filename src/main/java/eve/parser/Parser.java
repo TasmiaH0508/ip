@@ -111,4 +111,21 @@ public class Parser {
             this.scanner.close();
         }
     }
+
+    /**
+     * Returns whether a message consists of only space characters.
+     *
+     * @param message Message to test.
+     * @return true if message contains only space characters and false otherwise.
+     */
+    public boolean isEmptyMessage(String message) {
+        boolean hasOnlySpaceCharacter = true;
+        char[] messageChars = message.toCharArray();
+        for (char messageChar : messageChars) {
+            if (messageChar != ' ') {
+                hasOnlySpaceCharacter = false;
+            }
+        }
+        return hasOnlySpaceCharacter;
+    }
 }
