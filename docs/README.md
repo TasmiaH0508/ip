@@ -99,3 +99,10 @@ Examples:
 Removes all the tasks marked as complete from the list, to clean up the list.
 
 Format: ```clean```
+
+## Saving data: ```bye```
+
+Saves all the data after the command is run. If saved, the data can be retrieved for future use.
+**WARNING: Not running this command may cause none of the new data to be saved.**
+
+Format: ```bye```
