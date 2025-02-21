@@ -1,6 +1,5 @@
-package bob;
+package eve;
 
-import eve.Eve;
 import eve.dukeexception.DukeException;
 
 import org.junit.jupiter.api.Test;
