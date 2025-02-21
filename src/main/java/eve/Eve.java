@@ -336,30 +336,30 @@ public class Eve {
     public static String handleSearchCommand(String input) {
         String[] inputParts = parser.splitStringBySpacing(input);
         Set<Task> alreadyAdded = new HashSet<>();
-        List<Task> searchResults = new ArrayList<>();
+        List<Task> preprocessedSearchResults = new ArrayList<>();
+        List<Task> processedSearchResults = new ArrayList<>();
 
         for (String inputPart : inputParts) {
             List<Task> searchResultsForWord = TASK_LIST.getSearchResults(inputPart);
             if (searchResultsForWord != null) {
-                searchResults.addAll(searchResultsForWord);
+                preprocessedSearchResults.addAll(searchResultsForWord);
             }
         }
 
-        for (Task searchResult : searchResults) {
+        for (Task searchResult : preprocessedSearchResults) {
             if (!alreadyAdded.contains(searchResult)) {
+                processedSearchResults.add(searchResult);
                 alreadyAdded.add(searchResult);
-            } else {
-                searchResults.remove(searchResult);
             }
         }
 
         String message;
-        if (!searchResults.isEmpty()) {
+        if (!processedSearchResults.isEmpty()) {
             message = "Here are the matching tasks in your list:\n";
-            for (int i = 0; i < searchResults.size(); i++) {
-                Task t = searchResults.get(i);
+            for (int i = 0; i < processedSearchResults.size(); i++) {
+                Task t = processedSearchResults.get(i);
                 String taskDescription;
-                if (i == searchResults.size() - 1) {
+                if (i == processedSearchResults.size() - 1) {
                     taskDescription = (i + 1) + "." + t.getTaskDescription();
                 } else {
                     taskDescription = (i + 1) + "." + t.getTaskDescription() + "\n";
