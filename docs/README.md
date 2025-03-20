@@ -94,6 +94,16 @@ Examples:
 - ```unmark 1``` unmarks the task at index 1 as complete.
 - ```unmark 2, 3, 4``` unmarks tasks at indexes 2, 3 and 4 as complete.
 
+## Deleting events: ```delete```
+
+Removes events from task list.
+Format: ```delete ...```
+**(Only positive indices are allowed.)**
+
+Examples:
+- ```delete 1``` unmarks the task at index 1 as complete.
+- ```delete 2, 3, 4``` unmarks tasks at indexes 2, 3 and 4 as complete.
+
 ## Clearing completed tasks: ```clean```
 
 Removes all the tasks marked as complete from the list, to clean up the list.

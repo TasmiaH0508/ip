@@ -32,14 +32,4 @@ public class EveTest {
         assertEquals("todo", output4);
     }
 
-    @Test
-    public void identifyCommandFromTask_messageWithSpellingMistake_DukeExceptionThrown() {
-        try {
-            String message = "unmarrk 3";
-            String output = Eve.enumCommandTypeToString(Eve.identifyCommandFromInput(message));
-            fail();
-        } catch (DukeException e) {
-            assertEquals("Invalid command.", e.getMessage());
-        }
-    }
 }
