@@ -145,7 +145,7 @@ public class Eve {
      * @return message as a string.
      */
     public static String handleTodoCommand(String input) {
-        String taskDescription = parser.removeKeywordFromString(input, "todo");
+        String taskDescription = parser.removeKeywordFromString(input, "todo").trim();
         String message;
         if (parser.isEmptyMessage(taskDescription)) {
             message = "I think you're missing the task description...";
@@ -209,44 +209,45 @@ public class Eve {
      */
     public static String handleEventCommand(String input) {
         try {
-            String taskDescription = parser.removeKeywordFromString(input, "event");
+            String trimmedInput = input.trim();
+            String taskDescription = parser.removeKeywordFromString(trimmedInput, "event ").trim();
             String[] taskDescriptionSegments = parser.splitStringBySlash(taskDescription);
             assert taskDescriptionSegments.length == 7 : "There must be 7 task description segments.";
 
             assert taskDescriptionSegments[1].startsWith("from ") : "The segment of the task description must have" +
                     " the prefix: \"from \"";
-            String startDateString = parser.removeKeywordFromString(taskDescriptionSegments[1], "from ");
-            assert startDateString.length() <= 2 : "The date must have at least 1 or at most 2 digits.";
+            String startDateString = parser.removeKeywordFromString(taskDescriptionSegments[1], "from ").trim();
+            assert startDateString.length() <= 2 && !startDateString.isEmpty() : "The date must have at least 1 or at most 2 digits.";
             if (startDateString.length() == 1) {
                 startDateString = "0" + startDateString;
             }
-            String startMonthString = taskDescriptionSegments[2];
-            assert startMonthString.length() <= 2 : "The month must have at least 1 or at most 2 digits.";
+            String startMonthString = taskDescriptionSegments[2].trim();
+            assert startMonthString.length() <= 2 && !startMonthString.isEmpty(): "The month must have at least 1 or at most 2 digits.";
             if (startMonthString.length() == 1) {
                 startMonthString = "0" + startMonthString;
             }
-            String startYearString = taskDescriptionSegments[3].substring(0, 4);
+            String startYearString = taskDescriptionSegments[3].trim();
             assert startYearString.length() == 4 : "The year must have 4 digits.";
             String startTimeString = startYearString + "-" + startMonthString + "-" + startDateString;
 
             assert taskDescriptionSegments[4].startsWith("to ") : "The segment of the task description must have" +
                     " the prefix: \"to \"";
-            String endDateString = parser.removeKeywordFromString(taskDescriptionSegments[4], "to ");
+            String endDateString = parser.removeKeywordFromString(taskDescriptionSegments[4], "to ").trim();
             assert endDateString.length() <= 2 : "The date must have at least 1 or at most 2 digits.";
             if (endDateString.length() == 1) {
                 endDateString = "0" + endDateString;
             }
-            String endMonthString = taskDescriptionSegments[5];
+            String endMonthString = taskDescriptionSegments[5].trim();
             assert endMonthString.length() <= 2 : "The month must have at least 1 or at most 2 digits.";
             if (endMonthString.length() == 1) {
                 endMonthString = "0" + endMonthString;
             }
-            String endYearString = taskDescriptionSegments[6];
+            String endYearString = taskDescriptionSegments[6].trim();
             assert endYearString.length() == 4 : "The year must have 4 digits.";
             String endTimeString = endYearString + "-" + endMonthString + "-" + endDateString;
 
             String message;
-            if (parser.isEmptyMessage(taskDescriptionSegments[0])) {
+            if (parser.isEmptyMessage(taskDescriptionSegments[0].trim())) {
                 message = "The description cannot be empty.";
             } else {
                 Task t = new Event(taskDescriptionSegments[0], startTimeString, endTimeString);
