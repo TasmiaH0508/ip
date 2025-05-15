@@ -56,7 +56,7 @@ public class Parser {
         } else if (parts.length == 1) {
             return Integer.parseInt(parts[0]);
         } else {
-            throw new NumberFormatException("Excess spacing was used.");
+            throw new NumberFormatException();
         }
     }
 

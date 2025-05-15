@@ -109,12 +109,12 @@ public class Eve {
             } else {
                 prefix = "un";
             }
-            String numString = parser.removeKeywordFromString(input, prefix + "mark");
+            String numString = parser.removeKeywordFromString(input, prefix + "mark").trim();
             String[] numStringParts = parser.splitStringByComma(numString);
             int numIndices = numStringParts.length;
             int[] indicesToMark = new int[numIndices];
             for (int i = 0; i < numIndices; i++) {
-                indicesToMark[i] = parser.getNumberFromString(numStringParts[i]);
+                indicesToMark[i] = parser.getNumberFromString(numStringParts[i].trim());
             }
 
             String message;
@@ -133,7 +133,7 @@ public class Eve {
             }
             return message;
         } catch (NumberFormatException e) {
-            return "Too many spaces used.";
+            return "Please ensure only numbers are used.";
         }
     }
 
@@ -165,24 +165,24 @@ public class Eve {
      */
     public static String handleDeadlineCommand(String input) {
         try {
-            String taskDescription = parser.removeKeywordFromString(input, "deadline");
+            String taskDescription = parser.removeKeywordFromString(input, "deadline ");
             String[] taskDescriptionSegments = parser.splitStringBySlash(taskDescription);
             assert taskDescriptionSegments.length == 4 : "The task description should consist of 4 parts.";
 
             assert taskDescriptionSegments[1].startsWith("by ") : "The deadline segment of the task description must have" +
                     " the prefix: \"by \"";
-            String dateString = parser.removeKeywordFromString(taskDescriptionSegments[1], "by ");
-            assert dateString.length() <= 2: "The date must have at least 1 or " +
+            String dateString = parser.removeKeywordFromString(taskDescriptionSegments[1], "by ").trim();
+            assert dateString.length() <= 2 && !dateString.isEmpty(): "The date must have at least 1 or " +
                     "at most 2 digits.";
             if (dateString.length() == 1) {
                 dateString = "0" + dateString;
             }
-            String monthString = taskDescriptionSegments[2];
-            assert monthString.length() <= 2 : "The month must have at least 1 or at most 2 digits.";
+            String monthString = taskDescriptionSegments[2].trim();
+            assert monthString.length() <= 2 && !monthString.isEmpty(): "The month must have at least 1 or at most 2 digits.";
             if (monthString.length() == 1) {
                 monthString = "0" + monthString;
             }
-            String yearString = taskDescriptionSegments[3];
+            String yearString = taskDescriptionSegments[3].trim();
             assert yearString.length() == 4: "The year must have 4 digits.";
             String deadlineString = yearString + "-" + monthString + "-" + dateString;
 
@@ -279,13 +279,13 @@ public class Eve {
     public static String handleDeleteCommand(String input) {
         try {
             String message = "Noted. I've removed the following task(s):\n";;
-            String numString = parser.removeKeywordFromString(input, "delete");
+            String numString = parser.removeKeywordFromString(input, "delete ").trim();
             String[] numStringParts = parser.splitStringByComma(numString);
 
             int numIndices = numStringParts.length;
             List<Integer> indicesOfTasksToRemove = new ArrayList<>();
             for (int i = 0; i < numIndices; i++) {
-                int indexOfTask = parser.getNumberFromString(numStringParts[i]);
+                int indexOfTask = parser.getNumberFromString(numStringParts[i].trim());
                 indicesOfTasksToRemove.add(indexOfTask);
             }
             String descriptionsOfRemovedTasks = deleteTasksByIndex(indicesOfTasksToRemove);
@@ -300,7 +300,7 @@ public class Eve {
 
             return message;
         } catch (NumberFormatException e) {
-            String message = "Too many spaces used.";
+            String message = "Please ensure only numbers are used.";
             return message;
         }
     }
